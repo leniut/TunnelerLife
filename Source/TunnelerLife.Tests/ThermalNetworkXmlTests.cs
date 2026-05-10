@@ -29,9 +29,11 @@ public sealed class ThermalNetworkXmlTests
     [Fact]
     public void ThermalPipeVariants_MirrorVanillaConduitOptionsWithOneExtraSteel()
     {
+        XElement basePipeDef = LoadThingDef("TunnelerLife_ThermalPipe");
         XElement hiddenPipeDef = LoadThingDef("TunnelerLife_HiddenThermalPipe");
         XElement waterproofPipeDef = LoadThingDef("TunnelerLife_WaterproofThermalPipe");
 
+        Assert.Equal("TunnelerLife_ThermalPipe", (string?)basePipeDef.Attribute("Name"));
         Assert.Equal("TunnelerLife_ThermalPipe", (string?)hiddenPipeDef.Attribute("ParentName"));
         Assert.Equal("hidden thermal pipe", (string?)hiddenPipeDef.Element("label"));
         Assert.Equal("3", (string?)hiddenPipeDef.Element("costList")?.Element("Steel"));

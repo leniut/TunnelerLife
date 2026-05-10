@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-  <ThingDef ParentName="BuildingBase">
+  <ThingDef ParentName="BuildingBase" Name="TunnelerLife_ThermalPipe">
     <defName>TunnelerLife_ThermalPipe</defName>
     <label>thermal pipe</label>
     <description>A low-profile pipe that links thermal vents into a passive remote ventilation network. It does not create heat or cold.</description>
