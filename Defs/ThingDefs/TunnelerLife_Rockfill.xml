@@ -7,6 +7,7 @@
     <thingClass>TunnelerLife.Building_Rockfill</thingClass>
     <category>Building</category>
     <designationCategory>TunnelerLife</designationCategory>
+    <uiIconPath>UI/Designators/Rockfill</uiIconPath>
     <altitudeLayer>Building</altitudeLayer>
     <passability>Impassable</passability>
     <fillPercent>1</fillPercent>

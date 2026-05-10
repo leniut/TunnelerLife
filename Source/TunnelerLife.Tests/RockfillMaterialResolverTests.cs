@@ -5,6 +5,20 @@ namespace TunnelerLife.Tests;
 
 public sealed class RockfillMaterialResolverTests
 {
+    [Fact]
+    public void SupportedStuffDefNames_ReturnsAllSupportedStoneBlocks()
+    {
+        Assert.Equal(
+            [
+                "BlocksGranite",
+                "BlocksLimestone",
+                "BlocksMarble",
+                "BlocksSandstone",
+                "BlocksSlate"
+            ],
+            RockfillMaterialResolver.SupportedStuffDefNames);
+    }
+
     [Theory]
     [InlineData("BlocksGranite", "Granite")]
     [InlineData("BlocksLimestone", "Limestone")]

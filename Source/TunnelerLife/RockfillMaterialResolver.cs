@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TunnelerLife;
 
 /// <summary>
@@ -5,6 +7,15 @@ namespace TunnelerLife;
 /// </summary>
 public static class RockfillMaterialResolver
 {
+    private static readonly string[] SupportedStoneBlockDefNames =
+    [
+        BlocksGranite,
+        BlocksLimestone,
+        BlocksMarble,
+        BlocksSandstone,
+        BlocksSlate
+    ];
+
     private const string BlocksGranite = "BlocksGranite";
     private const string BlocksLimestone = "BlocksLimestone";
     private const string BlocksMarble = "BlocksMarble";
@@ -16,6 +27,11 @@ public static class RockfillMaterialResolver
     private const string Marble = "Marble";
     private const string Sandstone = "Sandstone";
     private const string Slate = "Slate";
+
+    /// <summary>
+    /// Gets the stone block stuff def names that rockfill can convert into rough natural stone.
+    /// </summary>
+    public static IReadOnlyList<string> SupportedStuffDefNames => SupportedStoneBlockDefNames;
 
     /// <summary>
     /// Returns the rock def name represented by a stone block stuff def name, or <see langword="null" /> when unsupported.
