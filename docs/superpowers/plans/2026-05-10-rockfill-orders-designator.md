@@ -12,7 +12,7 @@
 
 ### Task 1: Centralize Supported Materials
 
-- [ ] Add `SupportedStuffDefNames` to `RockfillMaterialResolver`.
+- [ ] Add `SupportedChunkDefNames` to `RockfillMaterialResolver`.
 - [ ] Add a unit test proving all five supported block defs are exposed.
 
 ### Task 2: Add Orders Designator

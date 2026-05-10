@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-  <ThingDef ParentName="BuildingBase">
-    <defName>TunnelerLife_Rockfill</defName>
+  <ThingDef Name="TunnelerLife_RockfillBase" ParentName="BuildingBase" Abstract="True">
     <label>rockfill</label>
-    <description>Rebuilds a mined-out tunnel cell into natural rough stone. Select the stone block material before placing it.</description>
+    <description>Rebuilds a mined-out tunnel cell into natural rough stone using one matching stone chunk.</description>
     <thingClass>TunnelerLife.Building_Rockfill</thingClass>
     <category>Building</category>
-    <designationCategory>TunnelerLife</designationCategory>
     <uiIconPath>UI/Designators/Rockfill</uiIconPath>
     <altitudeLayer>Building</altitudeLayer>
     <passability>Impassable</passability>
@@ -21,10 +19,6 @@
       <WorkToBuild>800</WorkToBuild>
       <Flammability>0</Flammability>
     </statBases>
-    <costStuffCount>25</costStuffCount>
-    <stuffCategories>
-      <li>Stony</li>
-    </stuffCategories>
     <graphicData>
       <texPath>Things/Building/Linked/Wall</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -42,5 +36,45 @@
       <ai_chillDestination>false</ai_chillDestination>
       <deconstructible>true</deconstructible>
     </building>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_RockfillBase">
+    <defName>TunnelerLife_Rockfill_Granite</defName>
+    <label>granite rockfill</label>
+    <costList>
+      <ChunkGranite>1</ChunkGranite>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_RockfillBase">
+    <defName>TunnelerLife_Rockfill_Limestone</defName>
+    <label>limestone rockfill</label>
+    <costList>
+      <ChunkLimestone>1</ChunkLimestone>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_RockfillBase">
+    <defName>TunnelerLife_Rockfill_Marble</defName>
+    <label>marble rockfill</label>
+    <costList>
+      <ChunkMarble>1</ChunkMarble>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_RockfillBase">
+    <defName>TunnelerLife_Rockfill_Sandstone</defName>
+    <label>sandstone rockfill</label>
+    <costList>
+      <ChunkSandstone>1</ChunkSandstone>
+    </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_RockfillBase">
+    <defName>TunnelerLife_Rockfill_Slate</defName>
+    <label>slate rockfill</label>
+    <costList>
+      <ChunkSlate>1</ChunkSlate>
+    </costList>
   </ThingDef>
 </Defs>

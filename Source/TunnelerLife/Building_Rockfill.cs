@@ -22,7 +22,7 @@ public sealed class Building_Rockfill : Building
             return;
         }
 
-        string? rockDefName = RockfillMaterialResolver.ResolveRockDefName(Stuff?.defName);
+        string? rockDefName = RockfillMaterialResolver.ResolveRockDefNameFromRockfillDefName(def.defName);
         if (rockDefName == null)
         {
             Messages.Message(
