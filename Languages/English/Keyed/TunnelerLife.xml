@@ -4,4 +4,5 @@
   <TunnelerLife_RockfillCannotPlaceOnWater>Rockfill cannot be placed on deep water.</TunnelerLife_RockfillCannotPlaceOnWater>
   <TunnelerLife_RockfillUnsupportedMaterial>Rockfill supports granite, limestone, marble, sandstone, and slate chunks.</TunnelerLife_RockfillUnsupportedMaterial>
   <TunnelerLife_RockfillNoChunksAvailable>No supported stone chunks are available.</TunnelerLife_RockfillNoChunksAvailable>
+  <TunnelerLife_ThermalPipeAlreadyHere>A thermal pipe is already planned or built here.</TunnelerLife_ThermalPipeAlreadyHere>
 </LanguageData>
