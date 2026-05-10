@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="BuildingBase">
+    <defName>TunnelerLife_Rockfill</defName>
+    <label>rockfill</label>
+    <description>Rebuilds a mined-out tunnel cell into natural rough stone. Select the stone block material before placing it.</description>
+    <thingClass>TunnelerLife.Building_Rockfill</thingClass>
+    <category>Building</category>
+    <designationCategory>TunnelerLife</designationCategory>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Impassable</passability>
+    <fillPercent>1</fillPercent>
+    <blockWind>true</blockWind>
+    <castEdgeShadows>true</castEdgeShadows>
+    <selectable>true</selectable>
+    <useHitPoints>true</useHitPoints>
+    <holdsRoof>true</holdsRoof>
+    <statBases>
+      <MaxHitPoints>300</MaxHitPoints>
+      <WorkToBuild>800</WorkToBuild>
+      <Flammability>0</Flammability>
+    </statBases>
+    <costStuffCount>25</costStuffCount>
+    <stuffCategories>
+      <li>Stony</li>
+    </stuffCategories>
+    <graphicData>
+      <texPath>Things/Building/Linked/Wall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <constructEffect>ConstructMetal</constructEffect>
+    <designationHotKey>Misc1</designationHotKey>
+    <placeWorkers>
+      <li>TunnelerLife.PlaceWorker_Rockfill</li>
+    </placeWorkers>
+    <building>
+      <isInert>true</isInert>
+      <isEdifice>true</isEdifice>
+      <claimable>false</claimable>
+      <ai_chillDestination>false</ai_chillDestination>
+      <deconstructible>true</deconstructible>
+    </building>
+  </ThingDef>
+</Defs>
