@@ -14,9 +14,9 @@ When both vents are open and connected by one pipe network, the connected rooms 
 
 ## V1 Scope
 
-- Add `Thermal pipe` in the Tunneler Life architect category.
+- Add `Thermal pipe`, `Hidden thermal pipe`, and `Waterproof thermal pipe` in the Tunneler Life architect category.
 - Add `Thermal vent` in the Tunneler Life architect category.
-- Thermal pipes are built like conduits, cost steel, can be dragged, and can share a tile with power conduits.
+- Thermal pipes are built like conduits, cost one more steel than the matching vanilla conduit, can be dragged, and can share a tile with power conduits.
 - Thermal vents are placed in walls like vanilla vents, cost the same as vanilla vents, and can be opened or closed.
 - A thermal vent connects only the room on its room-facing side to the pipe on its pipe-facing side.
 - The network only works when at least two open thermal vents are connected to the same pipe network and expose at least two rooms.
@@ -33,7 +33,9 @@ When both vents are open and connected by one pipe network, the connected rooms 
 
 ## Balance
 
-- `Thermal pipe`: 1 steel per cell.
+- `Thermal pipe`: 2 steel per cell.
+- `Hidden thermal pipe`: 3 steel per cell.
+- `Waterproof thermal pipe`: 11 steel per cell.
 - `Thermal vent`: 30 steel.
 - No power requirement in V1.
 - Transfer rate starts close to vanilla vent behavior, then can be tuned after in-game testing.

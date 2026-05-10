@@ -23,6 +23,24 @@ public sealed class ThermalNetworkXmlTests
         Assert.DoesNotContain(
             pipeDef.Descendants("li"),
             element => ((string?)element.Attribute("Class")) == "CompProperties_Power");
+        Assert.Equal("2", (string?)pipeDef.Element("costList")?.Element("Steel"));
+    }
+
+    [Fact]
+    public void ThermalPipeVariants_MirrorVanillaConduitOptionsWithOneExtraSteel()
+    {
+        XElement hiddenPipeDef = LoadThingDef("TunnelerLife_HiddenThermalPipe");
+        XElement waterproofPipeDef = LoadThingDef("TunnelerLife_WaterproofThermalPipe");
+
+        Assert.Equal("TunnelerLife_ThermalPipe", (string?)hiddenPipeDef.Attribute("ParentName"));
+        Assert.Equal("hidden thermal pipe", (string?)hiddenPipeDef.Element("label"));
+        Assert.Equal("3", (string?)hiddenPipeDef.Element("costList")?.Element("Steel"));
+        Assert.Equal("false", (string?)hiddenPipeDef.Element("building")?.Element("canBeDamagedByAttacks"));
+
+        Assert.Equal("TunnelerLife_ThermalPipe", (string?)waterproofPipeDef.Attribute("ParentName"));
+        Assert.Equal("waterproof thermal pipe", (string?)waterproofPipeDef.Element("label"));
+        Assert.Equal("11", (string?)waterproofPipeDef.Element("costList")?.Element("Steel"));
+        Assert.Equal("WaterproofConduitable", (string?)waterproofPipeDef.Element("terrainAffordanceNeeded"));
     }
 
     [Fact]

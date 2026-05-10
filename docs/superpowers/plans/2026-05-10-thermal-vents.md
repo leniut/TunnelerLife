@@ -66,11 +66,11 @@ Run `dotnet build Source\TunnelerLife\TunnelerLife.csproj -c Release -v minimal`
 
 - [ ] **Step 1: Write failing XML tests**
 
-Assert the pipe has no power comp, uses `Conduits` draw style, allows overlap with power, and the vent uses `Building_ThermalVent` with `CompProperties_Flickable`.
+Assert regular, hidden, and waterproof pipes have no power comp, cost one more steel than matching vanilla conduits, use conduit-style dragging, allow overlap with power, and the vent uses `Building_ThermalVent` with `CompProperties_Flickable`.
 
 - [ ] **Step 2: Add XML defs**
 
-Add `Thermal pipe` and `Thermal vent` to the Tunneler Life category with English labels/descriptions.
+Add `Thermal pipe`, `Hidden thermal pipe`, `Waterproof thermal pipe`, and `Thermal vent` to the Tunneler Life category with English labels/descriptions.
 
 - [ ] **Step 3: Update README**
 

@@ -37,7 +37,7 @@
     </statBases>
     <drawStyleCategory>Conduits</drawStyleCategory>
     <costList>
-      <Steel>1</Steel>
+      <Steel>2</Steel>
     </costList>
     <placeWorkers>
       <li>TunnelerLife.PlaceWorker_ThermalPipe</li>
@@ -53,6 +53,49 @@
     <researchPrerequisites>
       <li>ComplexFurniture</li>
     </researchPrerequisites>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_ThermalPipe">
+    <defName>TunnelerLife_HiddenThermalPipe</defName>
+    <label>hidden thermal pipe</label>
+    <description>Hidden insulated pipe for linking thermal vents. It is tougher and harder to damage than regular thermal pipe, but slower to build and more expensive.</description>
+    <graphicData>
+      <color>(0,0,0,0)</color>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>100</MaxHitPoints>
+      <WorkToBuild>280</WorkToBuild>
+      <Flammability>0</Flammability>
+      <Beauty>0</Beauty>
+    </statBases>
+    <uiIconPath>Things/Building/Linked/HiddenConduit_MenuIcon</uiIconPath>
+    <designationHotKey>Misc9</designationHotKey>
+    <costList>
+      <Steel>3</Steel>
+    </costList>
+    <constructEffect>ConstructDirt</constructEffect>
+    <building>
+      <ai_neverTrashThis>true</ai_neverTrashThis>
+      <isTargetable>false</isTargetable>
+      <expandHomeArea>false</expandHomeArea>
+      <canBeDamagedByAttacks>false</canBeDamagedByAttacks>
+    </building>
+  </ThingDef>
+
+  <ThingDef ParentName="TunnelerLife_ThermalPipe">
+    <defName>TunnelerLife_WaterproofThermalPipe</defName>
+    <label>waterproof thermal pipe</label>
+    <description>Insulated thermal pipe for linking thermal vents through shallow water or mud.</description>
+    <graphicData>
+      <texPath>Things/Building/Linked/WaterproofConduit_Atlas</texPath>
+    </graphicData>
+    <uiIconPath>Things/Building/Linked/WaterproofConduit_MenuIcon</uiIconPath>
+    <terrainAffordanceNeeded>WaterproofConduitable</terrainAffordanceNeeded>
+    <designationHotKey>Misc8</designationHotKey>
+    <costList>
+      <Steel>11</Steel>
+    </costList>
   </ThingDef>
 
   <ThingDef ParentName="BuildingBase">
