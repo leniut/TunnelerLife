@@ -1,0 +1,4 @@
+Assemblies/*.dll
+Assemblies/*.pdb
+Source/**/bin/
+Source/**/obj/
