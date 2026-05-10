@@ -7,14 +7,16 @@ using Verse;
 namespace TunnelerLife;
 
 /// <summary>
-/// Orders-tab dropdown designator for placing rockfill with available stone chunks.
+/// Orders-tab designator that opens a chunk-filtered material menu before placing rockfill.
 /// </summary>
-public sealed class Designator_Rockfill : Designator_Dropdown
+public sealed class Designator_Rockfill : Designator
 {
     private const string IconPath = "UI/Designators/Rockfill";
 
+    private readonly List<Designator_RockfillBuild> buildDesignators = [];
+
     /// <summary>
-    /// Creates the Orders command and its compact material menu.
+    /// Creates the Orders command and its compact chunk material menu.
     /// </summary>
     public Designator_Rockfill()
     {
@@ -29,12 +31,39 @@ public sealed class Designator_Rockfill : Designator_Dropdown
             ThingDef chunkDef = DefDatabase<ThingDef>.GetNamedSilentFail(material.ChunkDefName);
             if (rockfillDef != null && chunkDef != null)
             {
-                Add(new Designator_RockfillBuild(rockfillDef, chunkDef));
+                buildDesignators.Add(new Designator_RockfillBuild(rockfillDef, chunkDef));
             }
         }
     }
 
-    public override bool Visible => Elements.Any(element => element.Visible);
+    public override void ProcessInput(Event ev)
+    {
+        List<FloatMenuOption> options = buildDesignators
+            .Select(designator => (Designator: designator, Count: CountAvailableChunks(designator.ChunkDef)))
+            .Where(option => option.Count > 0)
+            .Select(option => new FloatMenuOption(
+                $"{option.Designator.ChunkDef.LabelCap} ({option.Count})",
+                () => option.Designator.ProcessInput(ev),
+                option.Designator.ChunkDef))
+            .ToList();
+
+        if (options.Count == 0)
+        {
+            Messages.Message("TunnelerLife_RockfillNoChunksAvailable".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+            return;
+        }
+
+        Find.WindowStack.Add(new FloatMenu(options));
+    }
+
+    public override AcceptanceReport CanDesignateCell(IntVec3 loc)
+    {
+        return AcceptanceReport.WasRejected;
+    }
+
+    public override void DesignateSingleCell(IntVec3 c)
+    {
+    }
 
     private static int CountAvailableChunks(ThingDef chunkDef)
     {
@@ -54,6 +83,8 @@ public sealed class Designator_Rockfill : Designator_Dropdown
     {
         private readonly ThingDef chunkDef;
 
+        public ThingDef ChunkDef => chunkDef;
+
         public Designator_RockfillBuild(BuildableDef rockfillDef, ThingDef chunkDef)
             : base(rockfillDef)
         {
@@ -65,9 +96,9 @@ public sealed class Designator_Rockfill : Designator_Dropdown
             useMouseIcon = true;
         }
 
-        public override bool Visible => CountAvailableChunks(chunkDef) > 0;
+        public override bool Visible => true;
 
-        public override string Label => $"{chunkDef.LabelCap} rockfill ({CountAvailableChunks(chunkDef)})";
+        public override string Label => $"{chunkDef.LabelCap} rockfill";
 
         public override string Desc => $"Rebuild selected tunnel cells into rough natural stone using {chunkDef.label}.";
     }

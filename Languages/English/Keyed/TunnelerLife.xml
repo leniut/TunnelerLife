@@ -3,4 +3,5 @@
   <TunnelerLife_RockfillCannotPlaceOnBuilding>Rockfill requires an empty cell.</TunnelerLife_RockfillCannotPlaceOnBuilding>
   <TunnelerLife_RockfillCannotPlaceOnWater>Rockfill cannot be placed on deep water.</TunnelerLife_RockfillCannotPlaceOnWater>
   <TunnelerLife_RockfillUnsupportedMaterial>Rockfill supports granite, limestone, marble, sandstone, and slate chunks.</TunnelerLife_RockfillUnsupportedMaterial>
+  <TunnelerLife_RockfillNoChunksAvailable>No supported stone chunks are available.</TunnelerLife_RockfillNoChunksAvailable>
 </LanguageData>
