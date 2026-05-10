@@ -39,6 +39,9 @@
     <costList>
       <Steel>2</Steel>
     </costList>
+    <comps>
+      <li Class="TunnelerLife.CompProperties_ThermalPipeOverlay" />
+    </comps>
     <placeWorkers>
       <li>TunnelerLife.PlaceWorker_ThermalPipe</li>
     </placeWorkers>
@@ -137,7 +140,7 @@
     </costList>
     <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
     <placeWorkers>
-      <li>PlaceWorker_Vent</li>
+      <li>TunnelerLife.PlaceWorker_ThermalVent</li>
     </placeWorkers>
     <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
     <building>

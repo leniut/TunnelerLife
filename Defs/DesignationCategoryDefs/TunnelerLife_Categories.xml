@@ -4,6 +4,7 @@
     <defName>TunnelerLife</defName>
     <label>Tunneler Life</label>
     <order>245</order>
+    <showPowerGrid>true</showPowerGrid>
     <specialDesignatorClasses>
       <li>Designator_Cancel</li>
       <li>Designator_Deconstruct</li>

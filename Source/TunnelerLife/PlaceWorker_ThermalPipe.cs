@@ -23,18 +23,13 @@ public sealed class PlaceWorker_ThermalPipe : PlaceWorker
                 continue;
             }
 
-            if (IsThermalPipe(existingThing.def) || IsThermalPipe(existingThing.def.entityDefToBuild as ThingDef))
+            if (ThermalPipeUtility.IsThermalPipe(existingThing.def)
+                || ThermalPipeUtility.IsThermalPipe(existingThing.def.entityDefToBuild as ThingDef))
             {
                 return "TunnelerLife_ThermalPipeAlreadyHere".Translate();
             }
         }
 
         return true;
-    }
-
-    private static bool IsThermalPipe(ThingDef? thingDef)
-    {
-        return thingDef?.thingClass != null
-            && typeof(Building_ThermalPipe).IsAssignableFrom(thingDef.thingClass);
     }
 }

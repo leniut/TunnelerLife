@@ -5,4 +5,6 @@
   <TunnelerLife_RockfillUnsupportedMaterial>Rockfill supports granite, limestone, marble, sandstone, and slate chunks.</TunnelerLife_RockfillUnsupportedMaterial>
   <TunnelerLife_RockfillNoChunksAvailable>No supported stone chunks are available.</TunnelerLife_RockfillNoChunksAvailable>
   <TunnelerLife_ThermalPipeAlreadyHere>A thermal pipe is already planned or built here.</TunnelerLife_ThermalPipeAlreadyHere>
+  <TunnelerLife_ThermalVentNeedsRoomSide>Thermal vent requires an open room on its room side.</TunnelerLife_ThermalVentNeedsRoomSide>
+  <TunnelerLife_ThermalVentNeedsPipeSide>Thermal vent requires a thermal pipe on its pipe side.</TunnelerLife_ThermalVentNeedsPipeSide>
 </LanguageData>
