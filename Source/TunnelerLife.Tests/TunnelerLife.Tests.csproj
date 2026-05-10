@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TunnelerLife\TunnelerLife.csproj" />
+    <ProjectReference Include="..\TunnelerLife\TunnelerLife.csproj" AdditionalProperties="TunnelerLifeSuppressProductionOutput=true" />
   </ItemGroup>
 </Project>

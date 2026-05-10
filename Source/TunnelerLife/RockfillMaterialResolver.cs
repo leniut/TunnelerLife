@@ -1,7 +1,7 @@
 namespace TunnelerLife;
 
 /// <summary>
-/// Resolves stone block def names to the rock material names used by rockfill.
+/// Resolves stone block def names to the rock def names used by rockfill.
 /// </summary>
 public static class RockfillMaterialResolver
 {
@@ -18,13 +18,13 @@ public static class RockfillMaterialResolver
     private const string Slate = "Slate";
 
     /// <summary>
-    /// Returns the rock material name represented by a stone block def name, or <see langword="null" /> when unsupported.
+    /// Returns the rock def name represented by a stone block stuff def name, or <see langword="null" /> when unsupported.
     /// </summary>
-    /// <param name="blockDefName">The RimWorld stone block def name, such as <c>BlocksGranite</c>.</param>
-    /// <returns>The matching rock material name, or <see langword="null" /> for null, empty, or unsupported values.</returns>
-    public static string? ResolveRockMaterialName(string? blockDefName)
+    /// <param name="stuffDefName">The RimWorld stone block stuff def name, such as <c>BlocksGranite</c>.</param>
+    /// <returns>The matching rock def name, or <see langword="null" /> for null, empty, or unsupported values.</returns>
+    public static string? ResolveRockDefName(string? stuffDefName)
     {
-        return blockDefName switch
+        return stuffDefName switch
         {
             BlocksGranite => Granite,
             BlocksLimestone => Limestone,

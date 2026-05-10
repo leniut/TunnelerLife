@@ -11,13 +11,13 @@ public sealed class RockfillMaterialResolverTests
     [InlineData("BlocksMarble", "Marble")]
     [InlineData("BlocksSandstone", "Sandstone")]
     [InlineData("BlocksSlate", "Slate")]
-    public void ResolveRockMaterialName_ReturnsMaterialNameForSupportedStoneBlocks(
-        string blockDefName,
-        string expectedMaterialName)
+    public void ResolveRockDefName_ReturnsRockDefNameForSupportedStoneBlocks(
+        string stuffDefName,
+        string expectedRockDefName)
     {
-        string? materialName = RockfillMaterialResolver.ResolveRockMaterialName(blockDefName);
+        string? rockDefName = RockfillMaterialResolver.ResolveRockDefName(stuffDefName);
 
-        Assert.Equal(expectedMaterialName, materialName);
+        Assert.Equal(expectedRockDefName, rockDefName);
     }
 
     [Theory]
@@ -25,10 +25,10 @@ public sealed class RockfillMaterialResolverTests
     [InlineData("")]
     [InlineData("BlocksWood")]
     [InlineData("Granite")]
-    public void ResolveRockMaterialName_ReturnsNullForMissingOrUnsupportedBlocks(string? blockDefName)
+    public void ResolveRockDefName_ReturnsNullForMissingOrUnsupportedBlocks(string? stuffDefName)
     {
-        string? materialName = RockfillMaterialResolver.ResolveRockMaterialName(blockDefName);
+        string? rockDefName = RockfillMaterialResolver.ResolveRockDefName(stuffDefName);
 
-        Assert.Null(materialName);
+        Assert.Null(rockDefName);
     }
 }

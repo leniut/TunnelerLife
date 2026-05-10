@@ -4,8 +4,8 @@
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <RimWorldManagedDir Condition="'$(RimWorldManagedDir)' == ''">J:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManagedDir>
-    <OutputPath Condition="'$(Configuration)' == 'Release'">..\..\Assemblies\</OutputPath>
-    <AppendTargetFrameworkToOutputPath Condition="'$(Configuration)' == 'Release'">false</AppendTargetFrameworkToOutputPath>
+    <OutputPath Condition="'$(Configuration)' == 'Release' and '$(TunnelerLifeSuppressProductionOutput)' != 'true'">..\..\Assemblies\</OutputPath>
+    <AppendTargetFrameworkToOutputPath Condition="'$(Configuration)' == 'Release' and '$(TunnelerLifeSuppressProductionOutput)' != 'true'">false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
