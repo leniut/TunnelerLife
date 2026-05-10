@@ -5,6 +5,9 @@
     <description>Rebuilds a mined-out tunnel cell into natural rough stone using one matching stone chunk.</description>
     <thingClass>TunnelerLife.Building_Rockfill</thingClass>
     <category>Building</category>
+    <designationCategory>TunnelerLife</designationCategory>
+    <uiOrder>100</uiOrder>
+    <canGenerateDefaultDesignator>false</canGenerateDefaultDesignator>
     <uiIconPath>UI/Designators/Rockfill</uiIconPath>
     <altitudeLayer>Building</altitudeLayer>
     <passability>Impassable</passability>
@@ -22,8 +25,12 @@
     </statBases>
     <graphicData>
       <texPath>Things/Building/Linked/Wall</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1,1)</drawSize>
+      <graphicClass>Graphic_Appearances</graphicClass>
+      <linkType>CornerFiller</linkType>
+      <linkFlags>
+        <li>Wall</li>
+        <li>Rock</li>
+      </linkFlags>
     </graphicData>
     <constructEffect>ConstructMetal</constructEffect>
     <designationHotKey>Misc1</designationHotKey>
@@ -36,6 +43,9 @@
       <claimable>false</claimable>
       <ai_chillDestination>false</ai_chillDestination>
       <deconstructible>true</deconstructible>
+      <blueprintGraphicData>
+        <texPath>Things/Building/Linked/Wall_Blueprint_Atlas</texPath>
+      </blueprintGraphicData>
     </building>
   </ThingDef>
 
