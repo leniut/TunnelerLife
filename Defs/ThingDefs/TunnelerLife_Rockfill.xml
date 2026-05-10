@@ -11,6 +11,7 @@
     <fillPercent>1</fillPercent>
     <blockWind>true</blockWind>
     <castEdgeShadows>true</castEdgeShadows>
+    <drawStyleCategory>Mine</drawStyleCategory>
     <selectable>true</selectable>
     <useHitPoints>true</useHitPoints>
     <holdsRoof>true</holdsRoof>
