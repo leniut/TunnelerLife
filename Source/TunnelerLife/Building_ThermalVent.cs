@@ -1,4 +1,5 @@
 using System.Text;
+using System.Collections.Generic;
 using RimWorld;
 using Verse;
 
@@ -13,22 +14,48 @@ public sealed class Building_ThermalVent : Building
 
     public override Graphic Graphic => flickableComp?.CurrentGraphic ?? base.Graphic;
 
-    public IntVec3 PipeCell => Position + IntVec3.North.RotatedBy(Rotation);
+    private static readonly IntVec3[] CardinalDirections =
+    [
+        IntVec3.North,
+        IntVec3.East,
+        IntVec3.South,
+        IntVec3.West
+    ];
 
-    public IntVec3 RoomCell => Position + IntVec3.South.RotatedBy(Rotation);
+    public IntVec3 OutletCell => Position + IntVec3.South.RotatedBy(Rotation);
 
     public bool IsOpen => FlickUtility.WantsToBeOn(this);
+
+    public IEnumerable<IntVec3> AdjacentPipeCells
+    {
+        get
+        {
+            if (!Spawned)
+            {
+                yield break;
+            }
+
+            foreach (IntVec3 direction in CardinalDirections)
+            {
+                IntVec3 cell = Position + direction;
+                if (ThermalPipeUtility.HasThermalPipeAt(cell, Map))
+                {
+                    yield return cell;
+                }
+            }
+        }
+    }
 
     public Room? ConnectedRoom
     {
         get
         {
-            if (!Spawned || !RoomCell.InBounds(Map))
+            if (!Spawned || !OutletCell.InBounds(Map) || OutletCell.Impassable(Map))
             {
                 return null;
             }
 
-            return RoomCell.GetRoom(Map);
+            return OutletCell.GetRoom(Map);
         }
     }
 
@@ -62,7 +89,15 @@ public sealed class Building_ThermalVent : Building
 
     public bool ConnectsToPipeCell(IntVec3 pipeCell)
     {
-        return PipeCell == pipeCell;
+        foreach (IntVec3 direction in CardinalDirections)
+        {
+            if (Position + direction == pipeCell)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static void AppendLineIfNeeded(StringBuilder builder)

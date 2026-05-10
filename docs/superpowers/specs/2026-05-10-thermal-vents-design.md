@@ -23,11 +23,11 @@ When both vents are open and connected by one pipe network, the connected rooms 
 
 ## Behavior
 
-- A thermal vent is directional.
-- The pipe side is the cell north of the vent after rotation.
-- The room side is the cell south of the vent after rotation.
-- If the pipe-side cell has no thermal pipe, the vent is inactive.
-- If the room-side cell has no room, the vent is inactive.
+- A thermal vent has a directional room outlet.
+- The outlet is the cell south of the vent after rotation.
+- A thermal pipe may touch the vent from any cardinal side.
+- If no adjacent cell has a thermal pipe, the vent is inactive.
+- If the outlet cell has no room, the vent is inactive.
 - Once per rare tick, one vent per connected network performs the exchange to avoid duplicate temperature transfer.
 - Outdoor rooms can influence the target temperature but are not directly modified.
 

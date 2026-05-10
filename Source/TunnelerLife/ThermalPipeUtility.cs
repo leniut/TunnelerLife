@@ -33,4 +33,23 @@ public static class ThermalPipeUtility
 
         return false;
     }
+
+    public static bool HasThermalPipeAt(IntVec3 cell, Map map)
+    {
+        if (!cell.InBounds(map))
+        {
+            return false;
+        }
+
+        List<Thing> things = cell.GetThingList(map);
+        for (int i = 0; i < things.Count; i++)
+        {
+            if (IsThermalPipe(things[i].def))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

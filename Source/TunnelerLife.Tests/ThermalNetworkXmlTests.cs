@@ -23,7 +23,7 @@ public sealed class ThermalNetworkXmlTests
         Assert.DoesNotContain(
             pipeDef.Descendants("li"),
             element => ((string?)element.Attribute("Class")) == "CompProperties_Power");
-        Assert.Contains(
+        Assert.DoesNotContain(
             pipeDef.Descendants("li"),
             element => ((string?)element.Attribute("Class")) == "TunnelerLife.CompProperties_ThermalPipeOverlay");
         Assert.Equal("2", (string?)pipeDef.Element("costList")?.Element("Steel"));
@@ -69,7 +69,7 @@ public sealed class ThermalNetworkXmlTests
     }
 
     [Fact]
-    public void TunnelerLifeCategory_ShowsThermalPipeOverlay()
+    public void TunnelerLifeCategory_DoesNotEnableVanillaPowerGridOverlay()
     {
         string modRoot = FindModRoot();
         string xmlPath = Path.Combine(modRoot, "Defs", "DesignationCategoryDefs", "TunnelerLife_Categories.xml");
@@ -77,7 +77,7 @@ public sealed class ThermalNetworkXmlTests
         XElement categoryDef = document.Root?.Element("DesignationCategoryDef")
             ?? throw new InvalidOperationException("Tunneler Life category was not found.");
 
-        Assert.Equal("true", (string?)categoryDef.Element("showPowerGrid"));
+        Assert.Null(categoryDef.Element("showPowerGrid"));
     }
 
     private static XElement LoadThingDef(string defName)

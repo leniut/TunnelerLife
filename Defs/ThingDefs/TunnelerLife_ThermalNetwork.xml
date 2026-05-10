@@ -39,9 +39,6 @@
     <costList>
       <Steel>2</Steel>
     </costList>
-    <comps>
-      <li Class="TunnelerLife.CompProperties_ThermalPipeOverlay" />
-    </comps>
     <placeWorkers>
       <li>TunnelerLife.PlaceWorker_ThermalPipe</li>
     </placeWorkers>

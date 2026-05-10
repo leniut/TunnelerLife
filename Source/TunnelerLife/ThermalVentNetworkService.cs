@@ -21,7 +21,7 @@ public static class ThermalVentNetworkService
 
     public static bool TryEqualizeNetwork(Building_ThermalVent origin)
     {
-        if (!origin.Spawned || !origin.IsOpen || !HasThermalPipeAt(origin.PipeCell, origin.Map))
+        if (!origin.Spawned || !origin.IsOpen)
         {
             return false;
         }
@@ -54,8 +54,13 @@ public static class ThermalVentNetworkService
         HashSet<IntVec3> visitedPipes = [];
         HashSet<Building_ThermalVent> vents = [];
 
-        pending.Enqueue(origin.PipeCell);
-        visitedPipes.Add(origin.PipeCell);
+        foreach (IntVec3 pipeCell in origin.AdjacentPipeCells)
+        {
+            if (visitedPipes.Add(pipeCell))
+            {
+                pending.Enqueue(pipeCell);
+            }
+        }
 
         while (pending.Count > 0)
         {
@@ -67,7 +72,7 @@ public static class ThermalVentNetworkService
                 IntVec3 adjacentPipeCell = pipeCell + direction;
                 if (adjacentPipeCell.InBounds(map)
                     && !visitedPipes.Contains(adjacentPipeCell)
-                    && HasThermalPipeAt(adjacentPipeCell, map))
+                    && ThermalPipeUtility.HasThermalPipeAt(adjacentPipeCell, map))
                 {
                     visitedPipes.Add(adjacentPipeCell);
                     pending.Enqueue(adjacentPipeCell);
@@ -99,25 +104,6 @@ public static class ThermalVentNetworkService
                 }
             }
         }
-    }
-
-    private static bool HasThermalPipeAt(IntVec3 cell, Map map)
-    {
-        if (!cell.InBounds(map))
-        {
-            return false;
-        }
-
-        List<Thing> things = cell.GetThingList(map);
-        for (int i = 0; i < things.Count; i++)
-        {
-            if (things[i] is Building_ThermalPipe)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static void EqualizeRooms(IReadOnlyList<Room> rooms, bool inVacuum)

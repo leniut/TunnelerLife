@@ -1,31 +1,27 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Verse;
 
 namespace TunnelerLife;
 
 /// <summary>
-/// Allows a thermal vent to expose one room to a pipe network on the opposite side.
+/// Shows the outlet direction and nearby thermal pipes without restricting where thermal vents can be placed.
 /// </summary>
 public sealed class PlaceWorker_ThermalVent : PlaceWorker
 {
     private static readonly Color PipeSideColor = new(1f, 0.85f, 0.05f, 0.8f);
+    private static readonly Color OutletColor = new(0.2f, 0.85f, 1f, 0.8f);
 
     public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing? thing = null)
     {
         Map currentMap = Find.CurrentMap;
-        IntVec3 roomCell = GetRoomCell(center, rot);
-        IntVec3 pipeCell = GetPipeCell(center, rot);
-
-        GenDraw.DrawFieldEdges([roomCell], Color.white);
-        GenDraw.DrawFieldEdges([pipeCell], PipeSideColor);
-
-        Room room = roomCell.GetRoom(currentMap);
-        if (room != null && !room.UsesOutdoorTemperature)
+        List<IntVec3> pipeCells = GetAdjacentPipeCells(center, currentMap);
+        if (pipeCells.Count > 0)
         {
-            GenDraw.DrawFieldEdges(room.Cells.ToList(), Color.white);
+            GenDraw.DrawFieldEdges(pipeCells, PipeSideColor);
         }
+
+        GenDraw.DrawFieldEdges([GetOutletCell(center, rot)], OutletColor);
     }
 
     public override AcceptanceReport AllowsPlacing(
@@ -36,28 +32,33 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
         Thing? thingToIgnore = null,
         Thing? thing = null)
     {
-        IntVec3 roomCell = GetRoomCell(loc, rot);
-        IntVec3 pipeCell = GetPipeCell(loc, rot);
-
-        if (!roomCell.InBounds(map) || roomCell.Impassable(map))
-        {
-            return "TunnelerLife_ThermalVentNeedsRoomSide".Translate();
-        }
-
-        if (!ThermalPipeUtility.HasThermalPipeOrBlueprintAt(pipeCell, map))
-        {
-            return "TunnelerLife_ThermalVentNeedsPipeSide".Translate();
-        }
-
         return true;
     }
 
-    private static IntVec3 GetPipeCell(IntVec3 center, Rot4 rot)
+    private static List<IntVec3> GetAdjacentPipeCells(IntVec3 center, Map map)
     {
-        return center + IntVec3.North.RotatedBy(rot);
+        List<IntVec3> pipeCells = [];
+        IntVec3[] directions =
+        [
+            IntVec3.North,
+            IntVec3.East,
+            IntVec3.South,
+            IntVec3.West
+        ];
+
+        foreach (IntVec3 direction in directions)
+        {
+            IntVec3 cell = center + direction;
+            if (ThermalPipeUtility.HasThermalPipeOrBlueprintAt(cell, map))
+            {
+                pipeCells.Add(cell);
+            }
+        }
+
+        return pipeCells;
     }
 
-    private static IntVec3 GetRoomCell(IntVec3 center, Rot4 rot)
+    private static IntVec3 GetOutletCell(IntVec3 center, Rot4 rot)
     {
         return center + IntVec3.South.RotatedBy(rot);
     }
