@@ -9,4 +9,20 @@
   <TunnelerLife_ThermalVentNeedsPipeSide>Thermal vent requires a thermal pipe on its pipe side.</TunnelerLife_ThermalVentNeedsPipeSide>
   <TunnelerLife_CommandDesignateOpenCloseThermalValveLabel>Designate open/close thermal valve</TunnelerLife_CommandDesignateOpenCloseThermalValveLabel>
   <TunnelerLife_CommandDesignateOpenCloseThermalValveDesc>Designate this thermal valve to be opened or closed. A colonist will come soon to adjust temperature transfer through the pipe network.</TunnelerLife_CommandDesignateOpenCloseThermalValveDesc>
+  <TunnelerLife_CommandSetThermostaticValveCoolingLabel>Set cooling mode</TunnelerLife_CommandSetThermostaticValveCoolingLabel>
+  <TunnelerLife_CommandSetThermostaticValveCoolingDesc>Use the coldest reachable source room and open only when it can cool the controlled room toward the target temperature.</TunnelerLife_CommandSetThermostaticValveCoolingDesc>
+  <TunnelerLife_CommandSetThermostaticValveHeatingLabel>Set heating mode</TunnelerLife_CommandSetThermostaticValveHeatingLabel>
+  <TunnelerLife_CommandSetThermostaticValveHeatingDesc>Use the warmest reachable source room and open only when it can heat the controlled room toward the target temperature.</TunnelerLife_CommandSetThermostaticValveHeatingDesc>
+  <TunnelerLife_ThermostaticValveModeHeating>heating</TunnelerLife_ThermostaticValveModeHeating>
+  <TunnelerLife_ThermostaticValveModeCooling>cooling</TunnelerLife_ThermostaticValveModeCooling>
+  <TunnelerLife_ThermostaticValveModeInspect>Mode: {0}</TunnelerLife_ThermostaticValveModeInspect>
+  <TunnelerLife_ThermostaticValveTargetInspect>Target: {0}</TunnelerLife_ThermostaticValveTargetInspect>
+  <TunnelerLife_ThermostaticValveControlledInspect>Controlled room: {0}</TunnelerLife_ThermostaticValveControlledInspect>
+  <TunnelerLife_ThermostaticValveSourceInspect>Source network: {0}</TunnelerLife_ThermostaticValveSourceInspect>
+  <TunnelerLife_ThermostaticValveStatusInspect>Status: {0}</TunnelerLife_ThermostaticValveStatusInspect>
+  <TunnelerLife_ThermostaticValveStatusOpen>open</TunnelerLife_ThermostaticValveStatusOpen>
+  <TunnelerLife_ThermostaticValveStatusClosed>closed</TunnelerLife_ThermostaticValveStatusClosed>
+  <TunnelerLife_ThermostaticValveStatusNoPower>closed, no power</TunnelerLife_ThermostaticValveStatusNoPower>
+  <TunnelerLife_ThermostaticValveStatusNoUsefulSource>closed, no useful source</TunnelerLife_ThermostaticValveStatusNoUsefulSource>
+  <TunnelerLife_ThermostaticValveTemperatureUnavailable>unavailable</TunnelerLife_ThermostaticValveTemperatureUnavailable>
 </LanguageData>

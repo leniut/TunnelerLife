@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Verse;
 
 namespace TunnelerLife;
@@ -64,7 +65,7 @@ internal static class ThermalNetworkRoomScanner
                     continue;
                 }
 
-                Room room = roomCell.GetRoom(map);
+                Room? room = GetConnectedVentRoom(networkCell, roomCell, map);
                 if (room != null && visitedRooms.Add(room))
                 {
                     roomPorts.Add(new ThermalNetworkRoomPort(networkCell, roomCell, room, room.Temperature));
@@ -73,6 +74,67 @@ internal static class ThermalNetworkRoomScanner
         }
 
         return roomPorts;
+    }
+
+    public static ThermalNetworkSideTemperatures GetSideTemperatures(
+        Building_ThermostaticValve valve,
+        ThermostaticValveMode mode)
+    {
+        if (!valve.Spawned)
+        {
+            return new ThermalNetworkSideTemperatures(null, null);
+        }
+
+        Map map = valve.Map;
+        Func<IntVec3, bool> isOpenNetworkCell = cell =>
+            cell.InBounds(map) && ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, map);
+
+        IReadOnlyList<ThermalNetworkRoomPort> controlledPorts = FindRoomPorts(
+            map,
+            ThermalPipeNetworkTraversal.FindConnectedCells(
+                [GetControlledSideCell(valve.Position, valve.Rotation)],
+                isOpenNetworkCell));
+        IReadOnlyList<ThermalNetworkRoomPort> sourcePorts = FindRoomPorts(
+            map,
+            ThermalPipeNetworkTraversal.FindConnectedCells(
+                GetSourceSideCells(valve.Position, valve.Rotation),
+                isOpenNetworkCell));
+
+        return new ThermalNetworkSideTemperatures(
+            AverageTemperature(controlledPorts),
+            SelectSourceTemperature(sourcePorts.Select(port => port.Temperature), mode));
+    }
+
+    private static Room? GetConnectedVentRoom(IntVec3 networkCell, IntVec3 ventCell, Map map)
+    {
+        List<Thing> things = ventCell.GetThingList(map);
+        for (int index = 0; index < things.Count; index++)
+        {
+            if (things[index] is Building_ThermalVent vent
+                && vent.IsOpen
+                && vent.ConnectsToPipeCell(networkCell))
+            {
+                return vent.ConnectedRoom;
+            }
+        }
+
+        return null;
+    }
+
+    private static float? AverageTemperature(IReadOnlyList<ThermalNetworkRoomPort> roomPorts)
+    {
+        if (roomPorts.Count == 0)
+        {
+            return null;
+        }
+
+        float totalTemperature = 0f;
+        for (int index = 0; index < roomPorts.Count; index++)
+        {
+            totalTemperature += roomPorts[index].Temperature;
+        }
+
+        return totalTemperature / roomPorts.Count;
     }
 
     private static float SelectMoreUsefulTemperature(

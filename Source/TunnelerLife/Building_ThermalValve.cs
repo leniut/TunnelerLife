@@ -12,7 +12,7 @@ public class Building_ThermalValve : Building
 
     public override Graphic Graphic => flickableComp?.CurrentGraphic ?? base.Graphic;
 
-    public bool IsOpen => FlickUtility.WantsToBeOn(this);
+    public virtual bool IsOpen => FlickUtility.WantsToBeOn(this);
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
