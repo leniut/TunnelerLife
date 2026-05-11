@@ -60,4 +60,18 @@ public sealed class ThermalNetworkSideSelectorTests
 
         Assert.Null(selected);
     }
+
+    [Fact]
+    public void GetDirectVentProbeCells_UsesValveCellAsNetworkCellForAdjacentVents()
+    {
+        IntVec3 valveCell = new(10, 0, 10);
+        IntVec3 controlledSideCell = valveCell + IntVec3.West;
+
+        ThermalNetworkVentProbe probe = ThermalNetworkRoomScanner
+            .GetDirectVentProbeCells(valveCell, [controlledSideCell])
+            .Single();
+
+        Assert.Equal(valveCell, probe.NetworkCell);
+        Assert.Equal(controlledSideCell, probe.VentCell);
+    }
 }

@@ -76,6 +76,16 @@ internal static class ThermalNetworkRoomScanner
         return roomPorts;
     }
 
+    public static IEnumerable<ThermalNetworkVentProbe> GetDirectVentProbeCells(
+        IntVec3 valveCell,
+        IEnumerable<IntVec3> sideCells)
+    {
+        foreach (IntVec3 sideCell in sideCells)
+        {
+            yield return new ThermalNetworkVentProbe(valveCell, sideCell);
+        }
+    }
+
     public static ThermalNetworkSideTemperatures GetSideTemperatures(
         Building_ThermostaticValve valve,
         ThermostaticValveMode mode)
@@ -89,20 +99,86 @@ internal static class ThermalNetworkRoomScanner
         Func<IntVec3, bool> isOpenNetworkCell = cell =>
             cell.InBounds(map) && ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, map);
 
-        IReadOnlyList<ThermalNetworkRoomPort> controlledPorts = FindRoomPorts(
+        IReadOnlyList<ThermalNetworkRoomPort> controlledPorts = FindSideRoomPorts(
             map,
-            ThermalPipeNetworkTraversal.FindConnectedCells(
-                [GetControlledSideCell(valve.Position, valve.Rotation)],
-                isOpenNetworkCell));
-        IReadOnlyList<ThermalNetworkRoomPort> sourcePorts = FindRoomPorts(
+            valve.Position,
+            [GetControlledSideCell(valve.Position, valve.Rotation)],
+            isOpenNetworkCell);
+        IReadOnlyList<ThermalNetworkRoomPort> sourcePorts = FindSideRoomPorts(
             map,
-            ThermalPipeNetworkTraversal.FindConnectedCells(
-                GetSourceSideCells(valve.Position, valve.Rotation),
-                isOpenNetworkCell));
+            valve.Position,
+            GetSourceSideCells(valve.Position, valve.Rotation),
+            isOpenNetworkCell);
 
         return new ThermalNetworkSideTemperatures(
             AverageTemperature(controlledPorts),
             SelectSourceTemperature(sourcePorts.Select(port => port.Temperature), mode));
+    }
+
+    private static IReadOnlyList<ThermalNetworkRoomPort> FindSideRoomPorts(
+        Map map,
+        IntVec3 valveCell,
+        IEnumerable<IntVec3> sideCells,
+        Func<IntVec3, bool> isOpenNetworkCell)
+    {
+        IntVec3[] sideCellArray = sideCells.ToArray();
+        List<ThermalNetworkRoomPort> roomPorts = [];
+        HashSet<Room> visitedRooms = [];
+
+        AddUniqueRoomPorts(
+            roomPorts,
+            visitedRooms,
+            FindDirectVentRoomPorts(map, GetDirectVentProbeCells(valveCell, sideCellArray)));
+        AddUniqueRoomPorts(
+            roomPorts,
+            visitedRooms,
+            FindRoomPorts(
+                map,
+                ThermalPipeNetworkTraversal.FindConnectedCells(sideCellArray, isOpenNetworkCell)));
+
+        return roomPorts;
+    }
+
+    private static IReadOnlyList<ThermalNetworkRoomPort> FindDirectVentRoomPorts(
+        Map map,
+        IEnumerable<ThermalNetworkVentProbe> ventProbes)
+    {
+        List<ThermalNetworkRoomPort> roomPorts = [];
+        HashSet<Room> visitedRooms = [];
+
+        foreach (ThermalNetworkVentProbe ventProbe in ventProbes)
+        {
+            if (!ventProbe.VentCell.InBounds(map))
+            {
+                continue;
+            }
+
+            Room? room = GetConnectedVentRoom(ventProbe.NetworkCell, ventProbe.VentCell, map);
+            if (room != null && visitedRooms.Add(room))
+            {
+                roomPorts.Add(new ThermalNetworkRoomPort(
+                    ventProbe.NetworkCell,
+                    ventProbe.VentCell,
+                    room,
+                    room.Temperature));
+            }
+        }
+
+        return roomPorts;
+    }
+
+    private static void AddUniqueRoomPorts(
+        List<ThermalNetworkRoomPort> destination,
+        HashSet<Room> visitedRooms,
+        IEnumerable<ThermalNetworkRoomPort> candidates)
+    {
+        foreach (ThermalNetworkRoomPort candidate in candidates)
+        {
+            if (visitedRooms.Add(candidate.Room))
+            {
+                destination.Add(candidate);
+            }
+        }
     }
 
     private static Room? GetConnectedVentRoom(IntVec3 networkCell, IntVec3 ventCell, Map map)
