@@ -4,6 +4,7 @@
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <RimWorldManagedDir Condition="'$(RimWorldManagedDir)' == ''">J:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManagedDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
     <ProjectReference Include="..\TunnelerLife\TunnelerLife.csproj" AdditionalProperties="TunnelerLifeSuppressProductionOutput=true" />
   </ItemGroup>
 </Project>

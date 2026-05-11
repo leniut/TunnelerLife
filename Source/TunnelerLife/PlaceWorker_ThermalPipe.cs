@@ -23,8 +23,8 @@ public sealed class PlaceWorker_ThermalPipe : PlaceWorker
                 continue;
             }
 
-            if (ThermalPipeUtility.IsThermalPipe(existingThing.def)
-                || ThermalPipeUtility.IsThermalPipe(existingThing.def.entityDefToBuild as ThingDef))
+            if (ThermalPipeUtility.IsThermalNetworkBuildable(existingThing.def)
+                || ThermalPipeUtility.IsThermalNetworkBuildable(existingThing.def.entityDefToBuild as ThingDef))
             {
                 return "TunnelerLife_ThermalPipeAlreadyHere".Translate();
             }

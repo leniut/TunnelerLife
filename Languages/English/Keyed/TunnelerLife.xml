@@ -7,4 +7,6 @@
   <TunnelerLife_ThermalPipeAlreadyHere>A thermal pipe is already planned or built here.</TunnelerLife_ThermalPipeAlreadyHere>
   <TunnelerLife_ThermalVentNeedsRoomSide>Thermal vent requires an open room on its room side.</TunnelerLife_ThermalVentNeedsRoomSide>
   <TunnelerLife_ThermalVentNeedsPipeSide>Thermal vent requires a thermal pipe on its pipe side.</TunnelerLife_ThermalVentNeedsPipeSide>
+  <TunnelerLife_CommandDesignateOpenCloseThermalValveLabel>Designate open/close thermal valve</TunnelerLife_CommandDesignateOpenCloseThermalValveLabel>
+  <TunnelerLife_CommandDesignateOpenCloseThermalValveDesc>Designate this thermal valve to be opened or closed. A colonist will come soon to adjust temperature transfer through the pipe network.</TunnelerLife_CommandDesignateOpenCloseThermalValveDesc>
 </LanguageData>

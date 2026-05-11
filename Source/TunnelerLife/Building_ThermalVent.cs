@@ -38,7 +38,7 @@ public sealed class Building_ThermalVent : Building
             foreach (IntVec3 direction in CardinalDirections)
             {
                 IntVec3 cell = Position + direction;
-                if (ThermalPipeUtility.HasThermalPipeAt(cell, Map))
+                if (ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, Map))
                 {
                     yield return cell;
                 }

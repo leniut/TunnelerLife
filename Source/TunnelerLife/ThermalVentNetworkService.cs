@@ -32,52 +32,27 @@ public static class ThermalVentNetworkService
             return false;
         }
 
-        List<Room> rooms = vents
-            .Select(vent => vent.ConnectedRoom)
-            .Where(room => room != null)
-            .Distinct()
-            .ToList()!;
+        List<RoomPortGroup> roomPortGroups = GetRoomPortGroups(vents);
 
-        if (rooms.Count < 2)
+        if (roomPortGroups.Count < 2)
         {
             return false;
         }
 
-        EqualizeRooms(rooms, origin.Map.Biome.inVacuum);
+        EqualizeRooms(roomPortGroups, origin.Map.Biome.inVacuum);
         return true;
     }
 
     private static List<Building_ThermalVent> FindConnectedOpenVents(Building_ThermalVent origin)
     {
         Map map = origin.Map;
-        Queue<IntVec3> pending = new();
-        HashSet<IntVec3> visitedPipes = [];
         HashSet<Building_ThermalVent> vents = [];
 
-        foreach (IntVec3 pipeCell in origin.AdjacentPipeCells)
+        foreach (IntVec3 pipeCell in ThermalPipeNetworkTraversal.FindConnectedCells(
+            origin.AdjacentPipeCells,
+            cell => cell.InBounds(map) && ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, map)))
         {
-            if (visitedPipes.Add(pipeCell))
-            {
-                pending.Enqueue(pipeCell);
-            }
-        }
-
-        while (pending.Count > 0)
-        {
-            IntVec3 pipeCell = pending.Dequeue();
             AddConnectedVents(pipeCell, map, vents);
-
-            foreach (IntVec3 direction in CardinalDirections)
-            {
-                IntVec3 adjacentPipeCell = pipeCell + direction;
-                if (adjacentPipeCell.InBounds(map)
-                    && !visitedPipes.Contains(adjacentPipeCell)
-                    && ThermalPipeUtility.HasThermalPipeAt(adjacentPipeCell, map))
-                {
-                    visitedPipes.Add(adjacentPipeCell);
-                    pending.Enqueue(adjacentPipeCell);
-                }
-            }
         }
 
         return vents.ToList();
@@ -106,19 +81,49 @@ public static class ThermalVentNetworkService
         }
     }
 
-    private static void EqualizeRooms(IReadOnlyList<Room> rooms, bool inVacuum)
+    private static List<RoomPortGroup> GetRoomPortGroups(IEnumerable<Building_ThermalVent> vents)
     {
-        ThermalRoomState[] states = rooms
-            .Select(room => new ThermalRoomState(room.Temperature, room.CellCount, room.UsesOutdoorTemperature))
+        Dictionary<Room, int> portCounts = [];
+        foreach (Building_ThermalVent vent in vents)
+        {
+            Room? room = vent.ConnectedRoom;
+            if (room == null)
+            {
+                continue;
+            }
+
+            portCounts.TryGetValue(room, out int currentCount);
+            portCounts[room] = currentCount + 1;
+        }
+
+        return portCounts.Select(pair => new RoomPortGroup(pair.Key, pair.Value)).ToList();
+    }
+
+    private static void EqualizeRooms(IReadOnlyList<RoomPortGroup> roomPortGroups, bool inVacuum)
+    {
+        ThermalRoomState[] states = roomPortGroups
+            .Select(group => new ThermalRoomState(
+                group.Room.Temperature,
+                group.Room.CellCount,
+                group.Room.UsesOutdoorTemperature,
+                group.ExchangePortCount))
             .ToArray();
         float[] deltas = ThermalExchangeCalculator.CalculateTemperatureDeltas(states, EqualizationRate, inVacuum);
 
-        for (int i = 0; i < rooms.Count; i++)
+        for (int i = 0; i < roomPortGroups.Count; i++)
         {
-            if (!rooms[i].UsesOutdoorTemperature)
+            Room room = roomPortGroups[i].Room;
+            if (!room.UsesOutdoorTemperature)
             {
-                rooms[i].Temperature += deltas[i];
+                room.Temperature += deltas[i];
             }
         }
+    }
+
+    private readonly struct RoomPortGroup(Room room, int exchangePortCount)
+    {
+        public Room Room { get; } = room;
+
+        public int ExchangePortCount { get; } = exchangePortCount;
     }
 }

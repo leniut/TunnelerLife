@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Verse;
 using Xunit;
 
 namespace TunnelerLife.Tests;
@@ -17,6 +20,17 @@ public sealed class ThermalNetworkXmlTests
         Assert.Equal("TunnelerLife", (string?)pipeDef.Element("designationCategory"));
         Assert.Equal("Conduits", (string?)pipeDef.Element("drawStyleCategory"));
         Assert.Equal("false", (string?)pipeDef.Element("clearBuildingArea"));
+        Assert.Equal(
+            "Things/Building/Linked/PowerConduit_Atlas",
+            (string?)pipeDef.Element("graphicData")?.Element("texPath"));
+        Assert.Equal(
+            "TunnelerLife.Graphic_LinkedThermalPipe",
+            (string?)pipeDef.Element("graphicData")?.Element("graphicClass"));
+        Assert.Null(pipeDef.Element("graphicData")?.Element("linkType"));
+        Assert.Contains(
+            "Custom1",
+            pipeDef.Element("graphicData")?.Element("linkFlags")?.Elements("li").Select(element => element.Value) ?? []);
+        Assert.Equal("(0.84,0.71,0.08,1)", (string?)pipeDef.Element("graphicData")?.Element("color"));
         Assert.Contains(
             "TunnelerLife.PlaceWorker_ThermalPipe",
             pipeDef.Element("placeWorkers")?.Elements("li").Select(element => element.Value) ?? []);
@@ -30,7 +44,7 @@ public sealed class ThermalNetworkXmlTests
     }
 
     [Fact]
-    public void ThermalPipeVariants_MirrorVanillaConduitOptionsWithOneExtraSteel()
+    public void ThermalPipeVariants_MirrorVanillaConduitOptionsAtDoubleSteelCost()
     {
         XElement basePipeDef = LoadThingDef("TunnelerLife_ThermalPipe");
         XElement hiddenPipeDef = LoadThingDef("TunnelerLife_HiddenThermalPipe");
@@ -39,12 +53,12 @@ public sealed class ThermalNetworkXmlTests
         Assert.Equal("TunnelerLife_ThermalPipe", (string?)basePipeDef.Attribute("Name"));
         Assert.Equal("TunnelerLife_ThermalPipe", (string?)hiddenPipeDef.Attribute("ParentName"));
         Assert.Equal("hidden thermal pipe", (string?)hiddenPipeDef.Element("label"));
-        Assert.Equal("3", (string?)hiddenPipeDef.Element("costList")?.Element("Steel"));
+        Assert.Equal("4", (string?)hiddenPipeDef.Element("costList")?.Element("Steel"));
         Assert.Equal("false", (string?)hiddenPipeDef.Element("building")?.Element("canBeDamagedByAttacks"));
 
         Assert.Equal("TunnelerLife_ThermalPipe", (string?)waterproofPipeDef.Attribute("ParentName"));
         Assert.Equal("waterproof thermal pipe", (string?)waterproofPipeDef.Element("label"));
-        Assert.Equal("11", (string?)waterproofPipeDef.Element("costList")?.Element("Steel"));
+        Assert.Equal("20", (string?)waterproofPipeDef.Element("costList")?.Element("Steel"));
         Assert.Equal("WaterproofConduitable", (string?)waterproofPipeDef.Element("terrainAffordanceNeeded"));
     }
 
@@ -69,6 +83,76 @@ public sealed class ThermalNetworkXmlTests
     }
 
     [Fact]
+    public void ThermalValve_IsFlickableTemperatureTransferCutoff()
+    {
+        XElement switchDef = LoadThingDef("TunnelerLife_ThermalPipeSwitch");
+
+        Assert.Equal("TunnelerLife_ThermalPipeSwitch", (string?)switchDef.Element("defName"));
+        Assert.Equal("thermal valve", (string?)switchDef.Element("label"));
+        Assert.Contains("temperature transfer", (string?)switchDef.Element("description") ?? string.Empty);
+        Assert.DoesNotContain("power", ((string?)switchDef.Element("description") ?? string.Empty).ToLowerInvariant());
+        Assert.Equal("TunnelerLife.Building_ThermalPipeSwitch", (string?)switchDef.Element("thingClass"));
+        Assert.Equal("TunnelerLife", (string?)switchDef.Element("designationCategory"));
+        Assert.Equal("RealtimeOnly", (string?)switchDef.Element("drawerType"));
+        Assert.Equal("Things/Building/TunnelerLife/ThermalValve", (string?)switchDef.Element("graphicData")?.Element("texPath"));
+        Assert.Equal("UI/Commands/ThermalValve", (string?)switchDef.Element("uiIconPath"));
+        Assert.Null(switchDef.Element("graphicData")?.Element("linkType"));
+        Assert.Contains(
+            "Custom1",
+            switchDef.Element("graphicData")?.Element("linkFlags")?.Elements("li").Select(element => element.Value) ?? []);
+        Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "Things", "Building", "TunnelerLife", "ThermalValve.png")));
+        Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "UI", "Commands", "ThermalValve.png")));
+        Assert.Equal("30", (string?)switchDef.Element("costList")?.Element("Steel"));
+        Assert.Equal("1", (string?)switchDef.Element("costList")?.Element("ComponentIndustrial"));
+        Assert.Contains(
+            "TunnelerLife.PlaceWorker_ThermalPipe",
+            switchDef.Element("placeWorkers")?.Elements("li").Select(element => element.Value) ?? []);
+        XElement flickableComp = switchDef.Descendants("li")
+            .Single(element => ((string?)element.Attribute("Class")) == "CompProperties_Flickable");
+        Assert.Equal("UI/Commands/ThermalValve", (string?)flickableComp.Element("commandTexture"));
+        Assert.Equal("TunnelerLife_CommandDesignateOpenCloseThermalValveLabel", (string?)flickableComp.Element("commandLabelKey"));
+        Assert.Equal("TunnelerLife_CommandDesignateOpenCloseThermalValveDesc", (string?)flickableComp.Element("commandDescKey"));
+        Assert.DoesNotContain(
+            switchDef.Descendants("li"),
+            element => ((string?)element.Attribute("Class")) == "CompProperties_Power");
+    }
+
+    [Fact]
+    public void ThermalPipe_UsesLinkedGraphicThatPrintsConnectionsIntoAdjacentThermalValves()
+    {
+        string valveTexturePath = Path.Combine(
+            FindModRoot(),
+            "Textures",
+            "Things",
+            "Building",
+            "TunnelerLife",
+            "ThermalValve.png");
+
+        Assert.Equal(
+            typeof(Graphic_Linked),
+            typeof(Graphic_LinkedThermalPipe).BaseType);
+        Assert.Equal(
+            typeof(Graphic_LinkedThermalPipe),
+            typeof(Graphic_LinkedThermalPipe).GetMethod(nameof(Graphic_LinkedThermalPipe.Print))?.DeclaringType);
+        Assert.Equal(
+            typeof(Graphic_LinkedThermalPipe),
+            typeof(Graphic_LinkedThermalPipe).GetMethod(nameof(Graphic_LinkedThermalPipe.ShouldLinkWith))?.DeclaringType);
+
+        using Bitmap valveTexture = new(valveTexturePath);
+        int valveCenterX = valveTexture.Width / 2;
+        int valveCenterY = valveTexture.Height / 2;
+        Assert.Equal(0, valveTexture.GetPixel(valveCenterX, 0).A);
+        Assert.Equal(0, valveTexture.GetPixel(valveCenterX, valveTexture.Height - 1).A);
+        Assert.Equal(0, valveTexture.GetPixel(0, valveCenterY).A);
+        Assert.Equal(0, valveTexture.GetPixel(valveTexture.Width - 1, valveCenterY).A);
+        Assert.True(valveTexture.GetPixel(valveCenterX, valveCenterY).A > 0);
+        Assert.True(valveTexture.GetPixel(44, valveCenterY).A > 0);
+        Assert.True(valveTexture.GetPixel(valveTexture.Width - 44, valveCenterY).A > 0);
+        Assert.True(valveTexture.GetPixel(valveCenterX, 44).A > 0);
+        Assert.True(valveTexture.GetPixel(valveCenterX, valveTexture.Height - 44).A > 0);
+    }
+
+    [Fact]
     public void TunnelerLifeCategory_DoesNotEnableVanillaPowerGridOverlay()
     {
         string modRoot = FindModRoot();
@@ -78,6 +162,35 @@ public sealed class ThermalNetworkXmlTests
             ?? throw new InvalidOperationException("Tunneler Life category was not found.");
 
         Assert.Null(categoryDef.Element("showPowerGrid"));
+    }
+
+    [Fact]
+    public void ThermalValveLanguage_UsesTemperatureTransferTextInsteadOfPowerText()
+    {
+        XElement languageData = LoadLanguageData();
+
+        Assert.Equal(
+            "Designate open/close thermal valve",
+            (string?)languageData.Element("TunnelerLife_CommandDesignateOpenCloseThermalValveLabel"));
+        string description = (string?)languageData.Element("TunnelerLife_CommandDesignateOpenCloseThermalValveDesc")
+            ?? string.Empty;
+        Assert.Contains("temperature transfer", description);
+        Assert.DoesNotContain("power", description.ToLowerInvariant());
+    }
+
+    [Fact]
+    public void TunnelerLife_PatchesVanillaPowerSwitchToDrawAboveCables()
+    {
+        string modRoot = FindModRoot();
+        string xmlPath = Path.Combine(modRoot, "Patches", "TunnelerLife_VanillaPowerSwitch.xml");
+        XDocument document = XDocument.Load(xmlPath);
+
+        XElement operation = document.Root?.Element("Operation")
+            ?? throw new InvalidOperationException("Vanilla power switch patch operation was not found.");
+
+        Assert.Equal("PatchOperationAdd", (string?)operation.Attribute("Class"));
+        Assert.Equal("Defs/ThingDef[defName=\"PowerSwitch\"]", (string?)operation.Element("xpath"));
+        Assert.Equal("RealtimeOnly", (string?)operation.Element("value")?.Element("drawerType"));
     }
 
     private static XElement LoadThingDef(string defName)
@@ -107,4 +220,15 @@ public sealed class ThermalNetworkXmlTests
 
         throw new DirectoryNotFoundException("Could not locate the Tunneler Life mod root.");
     }
+
+    private static XElement LoadLanguageData()
+    {
+        string modRoot = FindModRoot();
+        string xmlPath = Path.Combine(modRoot, "Languages", "English", "Keyed", "TunnelerLife.xml");
+        XDocument document = XDocument.Load(xmlPath);
+
+        return document.Root
+            ?? throw new InvalidOperationException("English keyed language data was not found.");
+    }
+
 }

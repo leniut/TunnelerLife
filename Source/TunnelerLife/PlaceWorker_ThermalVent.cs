@@ -49,7 +49,7 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
         foreach (IntVec3 direction in directions)
         {
             IntVec3 cell = center + direction;
-            if (ThermalPipeUtility.HasThermalPipeOrBlueprintAt(cell, map))
+            if (ThermalPipeUtility.HasThermalNetworkBuildableOrBlueprintAt(cell, map))
             {
                 pipeCells.Add(cell);
             }

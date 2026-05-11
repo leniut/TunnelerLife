@@ -9,8 +9,15 @@
     <designationCategory>TunnelerLife</designationCategory>
     <uiOrder>200</uiOrder>
     <graphicData>
-      <texPath>Things/Building/Linked/PowerConduit_MenuIcon</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
+      <texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
+      <graphicClass>TunnelerLife.Graphic_LinkedThermalPipe</graphicClass>
+      <linkFlags>
+        <li>Custom1</li>
+      </linkFlags>
+      <color>(0.84,0.71,0.08,1)</color>
+      <damageData>
+        <rect>(0,0.35,1,0.3)</rect>
+      </damageData>
     </graphicData>
     <uiIconPath>Things/Building/Linked/PowerConduit_MenuIcon</uiIconPath>
     <uiIconScale>0.7</uiIconScale>
@@ -72,7 +79,7 @@
     <uiIconPath>Things/Building/Linked/HiddenConduit_MenuIcon</uiIconPath>
     <designationHotKey>Misc9</designationHotKey>
     <costList>
-      <Steel>3</Steel>
+      <Steel>4</Steel>
     </costList>
     <constructEffect>ConstructDirt</constructEffect>
     <building>
@@ -94,8 +101,67 @@
     <terrainAffordanceNeeded>WaterproofConduitable</terrainAffordanceNeeded>
     <designationHotKey>Misc8</designationHotKey>
     <costList>
-      <Steel>11</Steel>
+      <Steel>20</Steel>
     </costList>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>TunnelerLife_ThermalPipeSwitch</defName>
+    <label>thermal valve</label>
+    <description>Opens or closes temperature transfer through a thermal pipe network. When closed, it stops heat and cold exchange through this cell.</description>
+    <thingClass>TunnelerLife.Building_ThermalPipeSwitch</thingClass>
+    <category>Building</category>
+    <designationCategory>TunnelerLife</designationCategory>
+    <uiOrder>205</uiOrder>
+    <drawerType>RealtimeOnly</drawerType>
+    <graphicData>
+      <texPath>Things/Building/TunnelerLife/ThermalValve</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <linkFlags>
+        <li>Custom1</li>
+      </linkFlags>
+      <shaderType>Transparent</shaderType>
+      <damageData>
+        <rect>(0.2,0.2,0.6,0.6)</rect>
+      </damageData>
+    </graphicData>
+    <uiIconPath>UI/Commands/ThermalValve</uiIconPath>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+      <isEdifice>false</isEdifice>
+    </building>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Standable</passability>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <statBases>
+      <MaxHitPoints>120</MaxHitPoints>
+      <WorkToBuild>200</WorkToBuild>
+      <Flammability>0.5</Flammability>
+      <Beauty>-2</Beauty>
+    </statBases>
+    <costList>
+      <Steel>30</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <placeWorkers>
+      <li>TunnelerLife.PlaceWorker_ThermalPipe</li>
+    </placeWorkers>
+    <comps>
+      <li Class="CompProperties_Flickable">
+        <commandTexture>UI/Commands/ThermalValve</commandTexture>
+        <commandLabelKey>TunnelerLife_CommandDesignateOpenCloseThermalValveLabel</commandLabelKey>
+        <commandDescKey>TunnelerLife_CommandDesignateOpenCloseThermalValveDesc</commandDescKey>
+      </li>
+    </comps>
+    <rotatable>false</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>false</neverMultiSelect>
+    <constructEffect>ConstructMetal</constructEffect>
+    <designationHotKey>Misc4</designationHotKey>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <researchPrerequisites>
+      <li>ComplexFurniture</li>
+    </researchPrerequisites>
   </ThingDef>
 
   <ThingDef ParentName="BuildingBase">

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/ThingDef[defName="PowerSwitch"]</xpath>
+    <value>
+      <drawerType>RealtimeOnly</drawerType>
+    </value>
+  </Operation>
+</Patch>

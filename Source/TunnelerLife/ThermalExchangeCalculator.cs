@@ -22,7 +22,8 @@ public static class ThermalExchangeCalculator
             return rooms.Select(_ => 0f).ToArray();
         }
 
-        float averageTemperature = rooms.Average(room => room.Temperature);
+        int totalExchangePorts = rooms.Sum(room => room.ExchangePortCount);
+        float averageTemperature = rooms.Sum(room => room.Temperature * room.ExchangePortCount) / (float)totalExchangePorts;
         float[] deltas = new float[rooms.Count];
 
         for (int i = 0; i < rooms.Count; i++)
@@ -33,7 +34,7 @@ public static class ThermalExchangeCalculator
                 continue;
             }
 
-            float delta = (averageTemperature - room.Temperature) * rate / room.CellCount;
+            float delta = (averageTemperature - room.Temperature) * rate * room.ExchangePortCount / room.CellCount;
             if (inVacuum && delta < 0f)
             {
                 delta *= 0.1f;

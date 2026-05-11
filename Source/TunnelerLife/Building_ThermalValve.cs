@@ -4,13 +4,20 @@ using Verse;
 namespace TunnelerLife;
 
 /// <summary>
-/// Marker building for cells that belong to a thermal pipe network.
+/// Flickable valve that can open or close thermal transfer through one network cell.
 /// </summary>
-public sealed class Building_ThermalPipe : Building
+public class Building_ThermalValve : Building
 {
+    private CompFlickable? flickableComp;
+
+    public override Graphic Graphic => flickableComp?.CurrentGraphic ?? base.Graphic;
+
+    public bool IsOpen => FlickUtility.WantsToBeOn(this);
+
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
+        flickableComp = GetComp<CompFlickable>();
         ThermalPipeMeshUtility.DirtyNetworkCellAndNeighbors(map, Position);
     }
 
@@ -20,18 +27,5 @@ public sealed class Building_ThermalPipe : Building
         IntVec3 position = Position;
         base.DeSpawn(mode);
         ThermalPipeMeshUtility.DirtyNetworkCellAndNeighbors(map, position);
-    }
-}
-
-internal static class ThermalPipeMeshUtility
-{
-    public static void DirtyNetworkCellAndNeighbors(Map map, IntVec3 position)
-    {
-        if (map == null)
-        {
-            return;
-        }
-
-        map.mapDrawer.MapMeshDirty(position, MapMeshFlagDefOf.Things, regenAdjacentCells: true, regenAdjacentSections: false);
     }
 }
