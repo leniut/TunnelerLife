@@ -223,4 +223,67 @@
       </li>
     </comps>
   </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>TunnelerLife_ThermostaticValve</defName>
+    <label>thermostatic valve</label>
+    <description>A powered thermal pipe valve with a target temperature. It opens only when the reachable source network can move the controlled room toward the target.</description>
+    <thingClass>TunnelerLife.Building_ThermostaticValve</thingClass>
+    <category>Building</category>
+    <designationCategory>TunnelerLife</designationCategory>
+    <uiOrder>215</uiOrder>
+    <tickerType>Rare</tickerType>
+    <drawerType>RealtimeOnly</drawerType>
+    <graphicData>
+      <texPath>Things/Building/TunnelerLife/ThermostaticValve</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <linkFlags>
+        <li>Custom1</li>
+      </linkFlags>
+      <shaderType>Transparent</shaderType>
+      <damageData>
+        <rect>(0.2,0.2,0.6,0.6)</rect>
+      </damageData>
+    </graphicData>
+    <uiIconPath>UI/Commands/ThermostaticValve</uiIconPath>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+      <isEdifice>false</isEdifice>
+    </building>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Standable</passability>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <statBases>
+      <MaxHitPoints>120</MaxHitPoints>
+      <WorkToBuild>250</WorkToBuild>
+      <Flammability>0.5</Flammability>
+      <Beauty>-2</Beauty>
+    </statBases>
+    <costList>
+      <Steel>45</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <placeWorkers>
+      <li>TunnelerLife.PlaceWorker_ThermalPipe</li>
+    </placeWorkers>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>20</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_TempControl">
+        <energyPerSecond>0</energyPerSecond>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+    </comps>
+    <rotatable>true</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>false</neverMultiSelect>
+    <constructEffect>ConstructMetal</constructEffect>
+    <designationHotKey>Misc5</designationHotKey>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <researchPrerequisites>
+      <li>Electricity</li>
+    </researchPrerequisites>
+  </ThingDef>
 </Defs>

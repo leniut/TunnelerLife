@@ -118,6 +118,37 @@ public sealed class ThermalNetworkXmlTests
     }
 
     [Fact]
+    public void ThermostaticValve_IsPoweredTemperatureControlledCutoff()
+    {
+        XElement valveDef = LoadThingDef("TunnelerLife_ThermostaticValve");
+
+        Assert.Equal("thermostatic valve", (string?)valveDef.Element("label"));
+        Assert.Contains("target temperature", (string?)valveDef.Element("description") ?? string.Empty);
+        Assert.Equal("TunnelerLife.Building_ThermostaticValve", (string?)valveDef.Element("thingClass"));
+        Assert.Equal("TunnelerLife", (string?)valveDef.Element("designationCategory"));
+        Assert.Equal("Rare", (string?)valveDef.Element("tickerType"));
+        Assert.Equal("RealtimeOnly", (string?)valveDef.Element("drawerType"));
+        Assert.Equal("true", (string?)valveDef.Element("rotatable"));
+        Assert.Equal("Things/Building/TunnelerLife/ThermostaticValve", (string?)valveDef.Element("graphicData")?.Element("texPath"));
+        Assert.Equal("UI/Commands/ThermostaticValve", (string?)valveDef.Element("uiIconPath"));
+
+        XElement powerComp = valveDef.Descendants("li")
+            .Single(element => ((string?)element.Attribute("Class")) == "CompProperties_Power");
+        Assert.Equal("CompPowerTrader", (string?)powerComp.Element("compClass"));
+        Assert.Equal("20", (string?)powerComp.Element("basePowerConsumption"));
+
+        XElement tempControlComp = valveDef.Descendants("li")
+            .Single(element => ((string?)element.Attribute("Class")) == "CompProperties_TempControl");
+        Assert.Equal("0", (string?)tempControlComp.Element("energyPerSecond"));
+        Assert.DoesNotContain(
+            valveDef.Descendants("li"),
+            element => ((string?)element.Attribute("Class")) == "CompProperties_Flickable");
+
+        Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "Things", "Building", "TunnelerLife", "ThermostaticValve.png")));
+        Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "UI", "Commands", "ThermostaticValve.png")));
+    }
+
+    [Fact]
     public void ThermalPipe_UsesLinkedGraphicThatPrintsConnectionsIntoAdjacentThermalValves()
     {
         string valveTexturePath = Path.Combine(
