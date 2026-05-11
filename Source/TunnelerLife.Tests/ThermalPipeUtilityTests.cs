@@ -12,6 +12,7 @@ public sealed class ThermalPipeUtilityTests
         Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermalPipe)));
         Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermalValve)));
         Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermalPipeSwitch)));
+        Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermostaticValve)));
         Assert.False(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermalVent)));
     }
 
@@ -30,6 +31,12 @@ public sealed class ThermalPipeUtilityTests
         Assert.Equal(
             typeof(Building_ThermalValve),
             typeof(Building_ThermalValve).GetMethod(nameof(Building_ThermalValve.DeSpawn))?.DeclaringType);
+        Assert.Equal(
+            typeof(Building_ThermostaticValve),
+            typeof(Building_ThermostaticValve).GetMethod(nameof(Building_ThermostaticValve.SpawnSetup))?.DeclaringType);
+        Assert.Equal(
+            typeof(Building_ThermalValve),
+            typeof(Building_ThermostaticValve).GetMethod(nameof(Building_ThermostaticValve.DeSpawn))?.DeclaringType);
     }
 
     [Fact]
@@ -40,5 +47,6 @@ public sealed class ThermalPipeUtilityTests
             typeof(Graphic_LinkedThermalPipe).GetMethod(nameof(Graphic_LinkedThermalPipe.ShouldLinkWith))?.DeclaringType);
         Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermalPipe)));
         Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermalValve)));
+        Assert.True(ThermalPipeUtility.IsThermalNetworkThingClass(typeof(Building_ThermostaticValve)));
     }
 }
