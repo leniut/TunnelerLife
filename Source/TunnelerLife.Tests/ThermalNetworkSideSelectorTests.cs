@@ -32,6 +32,36 @@ public sealed class ThermalNetworkSideSelectorTests
     }
 
     [Fact]
+    public void ResolveControlledSideCells_UsesSingleDirectVentWhenRotationPointsElsewhere()
+    {
+        IntVec3 valveCell = new(10, 0, 10);
+        IntVec3 directVentCell = valveCell + IntVec3.West;
+
+        IntVec3[] controlledCells = ThermalNetworkRoomScanner
+            .ResolveControlledSideCells(valveCell, Rot4.North, [directVentCell])
+            .ToArray();
+
+        Assert.Equal([directVentCell], controlledCells);
+    }
+
+    [Fact]
+    public void ResolveSourceSideCells_ExcludesResolvedDirectVentControlledSide()
+    {
+        IntVec3 valveCell = new(10, 0, 10);
+        IntVec3 directVentCell = valveCell + IntVec3.West;
+        IntVec3[] controlledCells = [directVentCell];
+
+        IntVec3[] sourceCells = ThermalNetworkRoomScanner
+            .ResolveSourceSideCells(valveCell, controlledCells)
+            .ToArray();
+
+        Assert.DoesNotContain(directVentCell, sourceCells);
+        Assert.Contains(valveCell + IntVec3.North, sourceCells);
+        Assert.Contains(valveCell + IntVec3.East, sourceCells);
+        Assert.Contains(valveCell + IntVec3.South, sourceCells);
+    }
+
+    [Fact]
     public void SelectSourceTemperature_ForHeatingUsesWarmestReachableRoom()
     {
         float? selected = ThermalNetworkRoomScanner.SelectSourceTemperature(

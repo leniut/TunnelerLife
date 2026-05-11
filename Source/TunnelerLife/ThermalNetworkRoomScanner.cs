@@ -23,10 +23,34 @@ internal static class ThermalNetworkRoomScanner
     public static IEnumerable<IntVec3> GetSourceSideCells(IntVec3 valveCell, Rot4 rotation)
     {
         IntVec3 controlledSideCell = GetControlledSideCell(valveCell, rotation);
+        return ResolveSourceSideCells(valveCell, [controlledSideCell]);
+    }
+
+    public static IEnumerable<IntVec3> ResolveControlledSideCells(
+        IntVec3 valveCell,
+        Rot4 rotation,
+        IEnumerable<IntVec3> directVentCells)
+    {
+        IntVec3 rotatedControlledCell = GetControlledSideCell(valveCell, rotation);
+        IntVec3[] directVentCellArray = directVentCells.ToArray();
+        if (!directVentCellArray.Contains(rotatedControlledCell) && directVentCellArray.Length == 1)
+        {
+            yield return directVentCellArray[0];
+            yield break;
+        }
+
+        yield return rotatedControlledCell;
+    }
+
+    public static IEnumerable<IntVec3> ResolveSourceSideCells(
+        IntVec3 valveCell,
+        IEnumerable<IntVec3> controlledSideCells)
+    {
+        HashSet<IntVec3> controlledCellSet = [.. controlledSideCells];
         foreach (IntVec3 direction in CardinalDirections)
         {
             IntVec3 sideCell = valveCell + direction;
-            if (sideCell != controlledSideCell)
+            if (!controlledCellSet.Contains(sideCell))
             {
                 yield return sideCell;
             }
@@ -98,21 +122,39 @@ internal static class ThermalNetworkRoomScanner
         Map map = valve.Map;
         Func<IntVec3, bool> isOpenNetworkCell = cell =>
             cell.InBounds(map) && ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, map);
+        IntVec3[] directVentCells = FindDirectVentCells(map, valve.Position).ToArray();
+        IntVec3[] controlledSideCells = ResolveControlledSideCells(
+            valve.Position,
+            valve.Rotation,
+            directVentCells).ToArray();
+        IntVec3[] sourceSideCells = ResolveSourceSideCells(valve.Position, controlledSideCells).ToArray();
 
         IReadOnlyList<ThermalNetworkRoomPort> controlledPorts = FindSideRoomPorts(
             map,
             valve.Position,
-            [GetControlledSideCell(valve.Position, valve.Rotation)],
+            controlledSideCells,
             isOpenNetworkCell);
         IReadOnlyList<ThermalNetworkRoomPort> sourcePorts = FindSideRoomPorts(
             map,
             valve.Position,
-            GetSourceSideCells(valve.Position, valve.Rotation),
+            sourceSideCells,
             isOpenNetworkCell);
 
         return new ThermalNetworkSideTemperatures(
             AverageTemperature(controlledPorts),
             SelectSourceTemperature(sourcePorts.Select(port => port.Temperature), mode));
+    }
+
+    private static IEnumerable<IntVec3> FindDirectVentCells(Map map, IntVec3 valveCell)
+    {
+        foreach (IntVec3 direction in CardinalDirections)
+        {
+            IntVec3 ventCell = valveCell + direction;
+            if (ventCell.InBounds(map) && GetConnectedVentRoom(valveCell, ventCell, map) != null)
+            {
+                yield return ventCell;
+            }
+        }
     }
 
     private static IReadOnlyList<ThermalNetworkRoomPort> FindSideRoomPorts(
