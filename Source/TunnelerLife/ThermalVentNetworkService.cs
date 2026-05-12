@@ -32,14 +32,17 @@ public static class ThermalVentNetworkService
             return false;
         }
 
-        List<RoomPortGroup> roomPortGroups = GetRoomPortGroups(vents);
+        List<RoomPortGroup> sourceRoomPortGroups = GetRoomPortGroups(
+            vents.Where(vent => vent.FlowMode == ThermalVentFlowMode.PullFromAirSide));
+        List<RoomPortGroup> outputRoomPortGroups = GetRoomPortGroups(
+            vents.Where(vent => vent.FlowMode == ThermalVentFlowMode.PushToAirSide));
 
-        if (roomPortGroups.Count < 2)
+        if (sourceRoomPortGroups.Count == 0 || outputRoomPortGroups.Count == 0)
         {
             return false;
         }
 
-        EqualizeRooms(roomPortGroups, origin.Map.Biome.inVacuum);
+        EqualizeRooms(sourceRoomPortGroups, outputRoomPortGroups, origin.Map.Biome.inVacuum);
         return true;
     }
 
@@ -50,7 +53,8 @@ public static class ThermalVentNetworkService
 
         foreach (IntVec3 pipeCell in ThermalPipeNetworkTraversal.FindConnectedCells(
             origin.AdjacentPipeCells,
-            cell => cell.InBounds(map) && ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, map)))
+            cell => cell.InBounds(map) && ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, map),
+            (fromCell, toCell) => ThermalPipeUtility.CanTraverseThermalNetworkEdge(fromCell, toCell, map)))
         {
             AddConnectedVents(pipeCell, map, vents);
         }
@@ -99,8 +103,14 @@ public static class ThermalVentNetworkService
         return portCounts.Select(pair => new RoomPortGroup(pair.Key, pair.Value)).ToList();
     }
 
-    private static void EqualizeRooms(IReadOnlyList<RoomPortGroup> roomPortGroups, bool inVacuum)
+    private static void EqualizeRooms(
+        IReadOnlyList<RoomPortGroup> sourceRoomPortGroups,
+        IReadOnlyList<RoomPortGroup> outputRoomPortGroups,
+        bool inVacuum)
     {
+        RoomPortGroup[] roomPortGroups = sourceRoomPortGroups
+            .Concat(outputRoomPortGroups)
+            .ToArray();
         ThermalRoomState[] states = roomPortGroups
             .Select(group => new ThermalRoomState(
                 group.Room.Temperature,
@@ -110,7 +120,7 @@ public static class ThermalVentNetworkService
             .ToArray();
         float[] deltas = ThermalExchangeCalculator.CalculateTemperatureDeltas(states, EqualizationRate, inVacuum);
 
-        for (int i = 0; i < roomPortGroups.Count; i++)
+        for (int i = sourceRoomPortGroups.Count; i < roomPortGroups.Length; i++)
         {
             Room room = roomPortGroups[i].Room;
             if (!room.UsesOutdoorTemperature)

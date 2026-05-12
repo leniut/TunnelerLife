@@ -53,4 +53,27 @@ public sealed class ThermalPipeNetworkTraversalTests
             ],
             connectedCells);
     }
+
+    [Fact]
+    public void FindConnectedCells_UsesDirectionalEdgeFilter()
+    {
+        IntVec3 startCell = new(0, 0, 0);
+        IntVec3 switchCell = new(1, 0, 0);
+        IntVec3 blockedCell = new(2, 0, 0);
+        IntVec3[] activeNetworkCells =
+        [
+            startCell,
+            switchCell,
+            blockedCell
+        ];
+
+        IntVec3[] connectedCells = ThermalPipeNetworkTraversal
+            .FindConnectedCells(
+                [startCell],
+                activeNetworkCells.Contains,
+                (fromCell, toCell) => fromCell != switchCell || toCell != blockedCell)
+            .ToArray();
+
+        Assert.Equal([startCell, switchCell], connectedCells);
+    }
 }

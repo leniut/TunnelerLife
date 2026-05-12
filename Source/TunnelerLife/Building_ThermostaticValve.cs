@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using RimWorld;
-using UnityEngine;
 using Verse;
 
 namespace TunnelerLife;
@@ -12,27 +10,30 @@ namespace TunnelerLife;
 /// </summary>
 public sealed class Building_ThermostaticValve : Building_ThermalValve
 {
-    private static readonly Material PoweredLampMaterial =
-        SolidColorMaterials.SimpleSolidColorMaterial(new Color(0.25f, 0.95f, 0.18f), false);
-
-    private static readonly Material UnpoweredLampMaterial =
-        SolidColorMaterials.SimpleSolidColorMaterial(new Color(1f, 0.1f, 0.05f), false);
+    private const string PoweredGraphicPath = "Things/Building/TunnelerLife/ThermostaticValve_On";
+    private const string UnpoweredGraphicPath = "Things/Building/TunnelerLife/ThermostaticValve_Off";
 
     private bool automaticOpen;
+    private IntVec3? activeSourceCell;
     private CompPowerTrader? powerComp;
     private CompTempControl? tempControlComp;
-    private ThermostaticValveMode mode = ThermostaticValveMode.Heating;
     private ThermostaticValveStatus status = ThermostaticValveStatus.Closed;
+    private Graphic? poweredGraphic;
+    private Graphic? unpoweredGraphic;
+
+    public override Graphic Graphic => HasPower ? PoweredGraphic : UnpoweredGraphic;
 
     public override bool IsOpen => automaticOpen;
-
-    public ThermostaticValveMode Mode => mode;
 
     public ThermostaticValveStatus Status => status;
 
     private bool HasPower => powerComp?.PowerOn ?? false;
 
     private float TargetTemperature => tempControlComp?.targetTemperature ?? 21f;
+
+    private Graphic PoweredGraphic => poweredGraphic ??= CreatePowerStateGraphic(PoweredGraphicPath);
+
+    private Graphic UnpoweredGraphic => unpoweredGraphic ??= CreatePowerStateGraphic(UnpoweredGraphicPath);
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
@@ -46,7 +47,6 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
     {
         base.ExposeData();
         Scribe_Values.Look(ref automaticOpen, "automaticOpen", false);
-        Scribe_Values.Look(ref mode, "thermostaticValveMode", ThermostaticValveMode.Heating);
         Scribe_Values.Look(ref status, "thermostaticValveStatus", ThermostaticValveStatus.Closed);
     }
 
@@ -56,34 +56,20 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
         EvaluateThermostat();
     }
 
-    public override IEnumerable<Gizmo> GetGizmos()
+    public bool CanConnectToThermalNetworkCell(IntVec3 adjacentCell)
     {
-        foreach (Gizmo gizmo in base.GetGizmos())
-        {
-            yield return gizmo;
-        }
-
-        yield return new Command_Action
-        {
-            defaultLabel = mode == ThermostaticValveMode.Heating
-                ? "TunnelerLife_CommandSetThermostaticValveCoolingLabel".Translate()
-                : "TunnelerLife_CommandSetThermostaticValveHeatingLabel".Translate(),
-            defaultDesc = mode == ThermostaticValveMode.Heating
-                ? "TunnelerLife_CommandSetThermostaticValveCoolingDesc".Translate()
-                : "TunnelerLife_CommandSetThermostaticValveHeatingDesc".Translate(),
-            action = ToggleMode
-        };
+        return automaticOpen
+            && activeSourceCell.HasValue
+            && activeSourceCell.Value == adjacentCell;
     }
 
     public override string GetInspectString()
     {
         StringBuilder builder = new(base.GetInspectString());
         ThermalNetworkSideTemperatures temperatures = Spawned
-            ? ThermalNetworkRoomScanner.GetSideTemperatures(this, mode)
+            ? ThermalNetworkRoomScanner.GetSideTemperatures(this, TargetTemperature)
             : new ThermalNetworkSideTemperatures(null, null);
 
-        AppendLineIfNeeded(builder);
-        builder.Append("TunnelerLife_ThermostaticValveModeInspect".Translate(ModeLabel));
         AppendLineIfNeeded(builder);
         builder.Append("TunnelerLife_ThermostaticValveTargetInspect".Translate(FormatTemperature(TargetTemperature)));
         AppendLineIfNeeded(builder);
@@ -95,16 +81,6 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
 
         return builder.ToString();
     }
-
-    protected override void DrawAt(Vector3 drawLoc, bool flip = false)
-    {
-        base.DrawAt(drawLoc, flip);
-        DrawPowerLamp(drawLoc);
-    }
-
-    private string ModeLabel => mode == ThermostaticValveMode.Heating
-        ? "TunnelerLife_ThermostaticValveModeHeating".Translate()
-        : "TunnelerLife_ThermostaticValveModeCooling".Translate();
 
     private string StatusLabel
     {
@@ -120,14 +96,6 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
         }
     }
 
-    private void ToggleMode()
-    {
-        mode = mode == ThermostaticValveMode.Heating
-            ? ThermostaticValveMode.Cooling
-            : ThermostaticValveMode.Heating;
-        EvaluateThermostat();
-    }
-
     private void EvaluateThermostat()
     {
         if (!Spawned)
@@ -141,49 +109,54 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
             return;
         }
 
-        ThermalNetworkSideTemperatures sideTemperatures = ThermalNetworkRoomScanner.GetSideTemperatures(this, mode);
+        ThermalNetworkSideTemperatures sideTemperatures = ThermalNetworkRoomScanner.GetSideTemperatures(
+            this,
+            TargetTemperature);
         if (!sideTemperatures.ControlledTemperature.HasValue)
         {
             ApplyDecision(new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource));
             return;
         }
 
-        ApplyDecision(ThermostaticValveController.Decide(
+        ThermostaticValveDecision decision = ThermostaticValveController.Decide(
             new ThermostaticValveDecisionInput(
-                mode,
                 TargetTemperature,
                 sideTemperatures.ControlledTemperature.Value,
                 sideTemperatures.SourceTemperature,
-                hasPower: true,
-                automaticOpen)));
+                hasPower: true));
+        ApplyDecision(decision, sideTemperatures.SourceCell);
     }
 
-    private void ApplyDecision(ThermostaticValveDecision decision)
+    private void ApplyDecision(ThermostaticValveDecision decision, IntVec3? sourceCell = null)
     {
-        if (automaticOpen != decision.IsOpen)
+        IntVec3? nextSourceCell = decision.IsOpen ? sourceCell : null;
+        if (automaticOpen != decision.IsOpen || !SameCell(activeSourceCell, nextSourceCell))
         {
             automaticOpen = decision.IsOpen;
+            activeSourceCell = nextSourceCell;
             ThermalPipeMeshUtility.DirtyNetworkCellAndNeighbors(Map, Position);
         }
 
         status = decision.Status;
     }
 
-    private void DrawPowerLamp(Vector3 drawLoc)
+    private static bool SameCell(IntVec3? left, IntVec3? right)
     {
-        if (!HasPower && (Find.TickManager.TicksGame / 30) % 2 != 0)
-        {
-            return;
-        }
+        return (!left.HasValue && !right.HasValue)
+            || (left.HasValue && right.HasValue && left.Value == right.Value);
+    }
 
-        Vector3 lampPosition = drawLoc;
-        lampPosition.x += 0.28f;
-        lampPosition.z += 0.28f;
-        lampPosition.y = AltitudeLayer.MetaOverlays.AltitudeFor();
-
-        Matrix4x4 matrix = default;
-        matrix.SetTRS(lampPosition, Quaternion.identity, new Vector3(0.12f, 1f, 0.12f));
-        Graphics.DrawMesh(MeshPool.plane10, matrix, HasPower ? PoweredLampMaterial : UnpoweredLampMaterial, 0);
+    private Graphic CreatePowerStateGraphic(string path)
+    {
+        Graphic baseGraphic = base.Graphic;
+        return GraphicDatabase.Get<Graphic_Single>(
+            path,
+            baseGraphic.Shader,
+            def.graphicData.drawSize,
+            baseGraphic.Color,
+            baseGraphic.ColorTwo,
+            def.graphicData,
+            null);
     }
 
     private static string FormatTemperature(float? temperature)

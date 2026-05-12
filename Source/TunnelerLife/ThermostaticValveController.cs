@@ -1,5 +1,3 @@
-using System;
-
 namespace TunnelerLife;
 
 /// <summary>
@@ -7,7 +5,7 @@ namespace TunnelerLife;
 /// </summary>
 public static class ThermostaticValveController
 {
-    public const float HysteresisDegrees = 1f;
+    private const float TemperatureTolerance = 2f;
 
     public static ThermostaticValveDecision Decide(ThermostaticValveDecisionInput input)
     {
@@ -21,45 +19,32 @@ public static class ThermostaticValveController
             return new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
         }
 
-        if (Math.Abs(input.ControlledTemperature - input.TargetTemperature) <= HysteresisDegrees)
+        float sourceTemperature = input.SourceTemperature.Value;
+
+        if (IsBelowTarget(input.ControlledTemperature, input.TargetTemperature))
         {
-            return new ThermostaticValveDecision(
-                input.PreviousIsOpen,
-                input.PreviousIsOpen ? ThermostaticValveStatus.Open : ThermostaticValveStatus.Closed);
+            return IsAboveTarget(sourceTemperature, input.TargetTemperature)
+                ? new ThermostaticValveDecision(true, ThermostaticValveStatus.Open)
+                : new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
         }
 
-        return input.Mode == ThermostaticValveMode.Heating
-            ? DecideHeating(input)
-            : DecideCooling(input);
+        if (IsAboveTarget(input.ControlledTemperature, input.TargetTemperature))
+        {
+            return IsBelowTarget(sourceTemperature, input.TargetTemperature)
+                ? new ThermostaticValveDecision(true, ThermostaticValveStatus.Open)
+                : new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
+        }
+
+        return new ThermostaticValveDecision(false, ThermostaticValveStatus.Closed);
     }
 
-    private static ThermostaticValveDecision DecideHeating(ThermostaticValveDecisionInput input)
+    private static bool IsBelowTarget(float temperature, float targetTemperature)
     {
-        if (input.ControlledTemperature >= input.TargetTemperature)
-        {
-            return new ThermostaticValveDecision(false, ThermostaticValveStatus.Closed);
-        }
-
-        if (input.SourceTemperature > input.ControlledTemperature)
-        {
-            return new ThermostaticValveDecision(true, ThermostaticValveStatus.Open);
-        }
-
-        return new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
+        return temperature < targetTemperature - TemperatureTolerance;
     }
 
-    private static ThermostaticValveDecision DecideCooling(ThermostaticValveDecisionInput input)
+    private static bool IsAboveTarget(float temperature, float targetTemperature)
     {
-        if (input.ControlledTemperature <= input.TargetTemperature)
-        {
-            return new ThermostaticValveDecision(false, ThermostaticValveStatus.Closed);
-        }
-
-        if (input.SourceTemperature < input.ControlledTemperature)
-        {
-            return new ThermostaticValveDecision(true, ThermostaticValveStatus.Open);
-        }
-
-        return new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
+        return temperature > targetTemperature + TemperatureTolerance;
     }
 }

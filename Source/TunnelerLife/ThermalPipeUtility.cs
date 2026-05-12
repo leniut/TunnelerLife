@@ -87,6 +87,36 @@ public static class ThermalPipeUtility
         return thing is Building_ThermalValve thermalValve && thermalValve.IsOpen;
     }
 
+    public static bool CanTraverseThermalNetworkEdge(IntVec3 fromCell, IntVec3 toCell, Map map)
+    {
+        return CanConnectFromThermalNetworkCell(fromCell, toCell, map)
+            && CanConnectFromThermalNetworkCell(toCell, fromCell, map);
+    }
+
+    private static bool CanConnectFromThermalNetworkCell(IntVec3 cell, IntVec3 adjacentCell, Map map)
+    {
+        if (!cell.InBounds(map))
+        {
+            return false;
+        }
+
+        List<Thing> things = cell.GetThingList(map);
+        for (int i = 0; i < things.Count; i++)
+        {
+            if (things[i] is Building_ThermostaticValve thermostaticValve)
+            {
+                return thermostaticValve.CanConnectToThermalNetworkCell(adjacentCell);
+            }
+
+            if (things[i] is Building_ThermalValve thermalValve)
+            {
+                return thermalValve.IsOpen;
+            }
+        }
+
+        return true;
+    }
+
     public static bool IsPlannedThermalNetworkThing(Thing thing)
     {
         return IsThermalNetworkBuildable(thing.def.entityDefToBuild as ThingDef);

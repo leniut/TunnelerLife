@@ -7,15 +7,23 @@
   <TunnelerLife_ThermalPipeAlreadyHere>A thermal pipe is already planned or built here.</TunnelerLife_ThermalPipeAlreadyHere>
   <TunnelerLife_ThermalVentNeedsRoomSide>Thermal vent requires an open room on its room side.</TunnelerLife_ThermalVentNeedsRoomSide>
   <TunnelerLife_ThermalVentNeedsPipeSide>Thermal vent requires a thermal pipe on its pipe side.</TunnelerLife_ThermalVentNeedsPipeSide>
+  <TunnelerLife_ThermalPipeNetworkTemperatureInspect>Network temperature: {0}</TunnelerLife_ThermalPipeNetworkTemperatureInspect>
+  <TunnelerLife_ThermalPipeConnectedRoomsInspect>Connected rooms: {0}</TunnelerLife_ThermalPipeConnectedRoomsInspect>
+  <TunnelerLife_ThermalPipeNetworkTemperatureUnavailable>unavailable</TunnelerLife_ThermalPipeNetworkTemperatureUnavailable>
+  <TunnelerLife_ThermalVentFlowModeInspect>Flow: {0}</TunnelerLife_ThermalVentFlowModeInspect>
+  <TunnelerLife_ThermalVentAirSideInspect>Air side: {0} ({1})</TunnelerLife_ThermalVentAirSideInspect>
+  <TunnelerLife_ThermalVentPipeSidesInspect>Pipe sides: {0} ({1} connected)</TunnelerLife_ThermalVentPipeSidesInspect>
+  <TunnelerLife_ThermalVentFlowPull>pull air into pipes</TunnelerLife_ThermalVentFlowPull>
+  <TunnelerLife_ThermalVentFlowPush>push pipe air out</TunnelerLife_ThermalVentFlowPush>
+  <TunnelerLife_CommandToggleThermalVentFlowDesc>Switch whether this vent pulls air from its air side into the pipe network or pushes pipe air out through its air side.</TunnelerLife_CommandToggleThermalVentFlowDesc>
+  <TunnelerLife_ThermalVentRoomConnected>room {0}</TunnelerLife_ThermalVentRoomConnected>
+  <TunnelerLife_ThermalVentRoomMissing>no room</TunnelerLife_ThermalVentRoomMissing>
+  <TunnelerLife_DirectionNorth>north</TunnelerLife_DirectionNorth>
+  <TunnelerLife_DirectionEast>east</TunnelerLife_DirectionEast>
+  <TunnelerLife_DirectionSouth>south</TunnelerLife_DirectionSouth>
+  <TunnelerLife_DirectionWest>west</TunnelerLife_DirectionWest>
   <TunnelerLife_CommandDesignateOpenCloseThermalValveLabel>Designate open/close thermal valve</TunnelerLife_CommandDesignateOpenCloseThermalValveLabel>
   <TunnelerLife_CommandDesignateOpenCloseThermalValveDesc>Designate this thermal valve to be opened or closed. A colonist will come soon to adjust temperature transfer through the pipe network.</TunnelerLife_CommandDesignateOpenCloseThermalValveDesc>
-  <TunnelerLife_CommandSetThermostaticValveCoolingLabel>Set cooling mode</TunnelerLife_CommandSetThermostaticValveCoolingLabel>
-  <TunnelerLife_CommandSetThermostaticValveCoolingDesc>Use the coldest reachable source room and open only when it can cool the controlled room toward the target temperature.</TunnelerLife_CommandSetThermostaticValveCoolingDesc>
-  <TunnelerLife_CommandSetThermostaticValveHeatingLabel>Set heating mode</TunnelerLife_CommandSetThermostaticValveHeatingLabel>
-  <TunnelerLife_CommandSetThermostaticValveHeatingDesc>Use the warmest reachable source room and open only when it can heat the controlled room toward the target temperature.</TunnelerLife_CommandSetThermostaticValveHeatingDesc>
-  <TunnelerLife_ThermostaticValveModeHeating>heating</TunnelerLife_ThermostaticValveModeHeating>
-  <TunnelerLife_ThermostaticValveModeCooling>cooling</TunnelerLife_ThermostaticValveModeCooling>
-  <TunnelerLife_ThermostaticValveModeInspect>Mode: {0}</TunnelerLife_ThermostaticValveModeInspect>
   <TunnelerLife_ThermostaticValveTargetInspect>Target: {0}</TunnelerLife_ThermostaticValveTargetInspect>
   <TunnelerLife_ThermostaticValveControlledInspect>Controlled room: {0}</TunnelerLife_ThermostaticValveControlledInspect>
   <TunnelerLife_ThermostaticValveSourceInspect>Source network: {0}</TunnelerLife_ThermostaticValveSourceInspect>

@@ -6,22 +6,16 @@ namespace TunnelerLife;
 public readonly struct ThermostaticValveDecisionInput
 {
     public ThermostaticValveDecisionInput(
-        ThermostaticValveMode mode,
         float targetTemperature,
         float controlledTemperature,
         float? sourceTemperature,
-        bool hasPower,
-        bool previousIsOpen)
+        bool hasPower)
     {
-        Mode = mode;
         TargetTemperature = targetTemperature;
         ControlledTemperature = controlledTemperature;
         SourceTemperature = sourceTemperature;
         HasPower = hasPower;
-        PreviousIsOpen = previousIsOpen;
     }
-
-    public ThermostaticValveMode Mode { get; }
 
     public float TargetTemperature { get; }
 
@@ -30,6 +24,4 @@ public readonly struct ThermostaticValveDecisionInput
     public float? SourceTemperature { get; }
 
     public bool HasPower { get; }
-
-    public bool PreviousIsOpen { get; }
 }

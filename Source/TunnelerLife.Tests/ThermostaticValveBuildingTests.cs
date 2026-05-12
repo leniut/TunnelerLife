@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using TunnelerLife;
 using Verse;
@@ -25,7 +26,7 @@ public sealed class ThermostaticValveBuildingTests
     }
 
     [Fact]
-    public void ThermostaticValve_StoresModeAndRunsRareTick()
+    public void ThermostaticValve_RunsAutomaticallyWithoutManualModeGizmo()
     {
         Assert.Equal(
             typeof(Building_ThermostaticValve),
@@ -33,10 +34,38 @@ public sealed class ThermostaticValveBuildingTests
         Assert.Equal(
             typeof(Building_ThermostaticValve),
             typeof(Building_ThermostaticValve).GetMethod(nameof(Building.ExposeData))?.DeclaringType);
-        Assert.Equal(
+        Assert.Null(typeof(Building_ThermostaticValve).GetProperty("Mode"));
+        Assert.NotEqual(
             typeof(Building_ThermostaticValve),
             typeof(Building_ThermostaticValve)
                 .GetMethod(nameof(Building.GetGizmos), BindingFlags.Instance | BindingFlags.Public)
+                ?.DeclaringType);
+    }
+
+    [Fact]
+    public void ThermostaticValve_DoesNotEagerInitializePowerLampMaterials()
+    {
+        FieldInfo[] staticMaterialFields = typeof(Building_ThermostaticValve)
+            .GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
+            .Where(field => field.FieldType.FullName == "UnityEngine.Material")
+            .ToArray();
+
+        Assert.Empty(staticMaterialFields);
+    }
+
+    [Fact]
+    public void ThermostaticValve_UsesPowerStateSpecificGraphicsInsteadOfOverlayLamp()
+    {
+        Assert.Equal(
+            typeof(Building_ThermostaticValve),
+            typeof(Building_ThermostaticValve).GetProperty(nameof(Building.Graphic))?.GetMethod?.DeclaringType);
+        Assert.Null(typeof(Building_ThermostaticValve).GetMethod(
+            "DrawPowerLamp",
+            BindingFlags.Instance | BindingFlags.NonPublic));
+        Assert.NotEqual(
+            typeof(Building_ThermostaticValve),
+            typeof(Building_ThermostaticValve)
+                .GetMethod("DrawAt", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.DeclaringType);
     }
 }

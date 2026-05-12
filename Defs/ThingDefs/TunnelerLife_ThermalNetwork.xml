@@ -3,7 +3,7 @@
   <ThingDef ParentName="BuildingBase" Name="TunnelerLife_ThermalPipe">
     <defName>TunnelerLife_ThermalPipe</defName>
     <label>thermal pipe</label>
-    <description>A low-profile pipe that links thermal vents into a passive remote ventilation network. It does not create heat or cold.</description>
+    <description>A low-profile pipe that links thermal vents into a passive remote ventilation network. It does not create heat or cold. Select a pipe to inspect the reachable network temperature.</description>
     <thingClass>TunnelerLife.Building_ThermalPipe</thingClass>
     <category>Building</category>
     <designationCategory>TunnelerLife</designationCategory>
@@ -167,7 +167,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>TunnelerLife_ThermalVent</defName>
     <label>thermal vent</label>
-    <description>A wall vent that connects one room to a thermal pipe network. Open thermal vents in the same network passively equalize room temperatures over distance.</description>
+    <description>A directional wall vent that connects one air side to thermal pipes on the other three sides. It can pull air into pipes or push pipe air out through its air side.</description>
     <thingClass>TunnelerLife.Building_ThermalVent</thingClass>
     <category>Building</category>
     <designationCategory>TunnelerLife</designationCategory>

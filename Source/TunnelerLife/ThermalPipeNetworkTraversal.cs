@@ -16,10 +16,12 @@ internal static class ThermalPipeNetworkTraversal
 
     public static IEnumerable<IntVec3> FindConnectedCells(
         IEnumerable<IntVec3> startingCells,
-        Func<IntVec3, bool> isOpenNetworkCell)
+        Func<IntVec3, bool> isOpenNetworkCell,
+        Func<IntVec3, IntVec3, bool>? canTraverse = null)
     {
         Queue<IntVec3> pending = new();
         HashSet<IntVec3> visited = [];
+        Func<IntVec3, IntVec3, bool> canTraverseEdge = canTraverse ?? ((_, _) => true);
 
         foreach (IntVec3 startingCell in startingCells)
         {
@@ -37,7 +39,9 @@ internal static class ThermalPipeNetworkTraversal
             foreach (IntVec3 direction in CardinalDirections)
             {
                 IntVec3 adjacentCell = cell + direction;
-                if (!visited.Contains(adjacentCell) && isOpenNetworkCell(adjacentCell))
+                if (!visited.Contains(adjacentCell)
+                    && isOpenNetworkCell(adjacentCell)
+                    && canTraverseEdge(cell, adjacentCell))
                 {
                     visited.Add(adjacentCell);
                     pending.Enqueue(adjacentCell);

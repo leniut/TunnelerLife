@@ -5,7 +5,7 @@ using Verse;
 namespace TunnelerLife;
 
 /// <summary>
-/// Shows the outlet direction and nearby thermal pipes without restricting where thermal vents can be placed.
+/// Shows the pipe input side and room output side without restricting where thermal vents can be placed.
 /// </summary>
 public sealed class PlaceWorker_ThermalVent : PlaceWorker
 {
@@ -14,13 +14,7 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
 
     public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing? thing = null)
     {
-        Map currentMap = Find.CurrentMap;
-        List<IntVec3> pipeCells = GetAdjacentPipeCells(center, currentMap);
-        if (pipeCells.Count > 0)
-        {
-            GenDraw.DrawFieldEdges(pipeCells, PipeSideColor);
-        }
-
+        GenDraw.DrawFieldEdges(GetPipeCells(center, rot), PipeSideColor);
         GenDraw.DrawFieldEdges([GetOutletCell(center, rot)], OutletColor);
     }
 
@@ -35,9 +29,9 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
         return true;
     }
 
-    private static List<IntVec3> GetAdjacentPipeCells(IntVec3 center, Map map)
+    private static List<IntVec3> GetPipeCells(IntVec3 center, Rot4 rot)
     {
-        List<IntVec3> pipeCells = [];
+        IntVec3 outletCell = GetOutletCell(center, rot);
         IntVec3[] directions =
         [
             IntVec3.North,
@@ -45,13 +39,13 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
             IntVec3.South,
             IntVec3.West
         ];
-
+        List<IntVec3> pipeCells = [];
         foreach (IntVec3 direction in directions)
         {
-            IntVec3 cell = center + direction;
-            if (ThermalPipeUtility.HasThermalNetworkBuildableOrBlueprintAt(cell, map))
+            IntVec3 pipeCell = center + direction;
+            if (pipeCell != outletCell)
             {
-                pipeCells.Add(cell);
+                pipeCells.Add(pipeCell);
             }
         }
 

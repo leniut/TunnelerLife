@@ -17,6 +17,7 @@ public sealed class ThermalNetworkXmlTests
         XElement pipeDef = LoadThingDef("TunnelerLife_ThermalPipe");
 
         Assert.Equal("TunnelerLife.Building_ThermalPipe", (string?)pipeDef.Element("thingClass"));
+        Assert.Contains("inspect the reachable network temperature", (string?)pipeDef.Element("description") ?? string.Empty);
         Assert.Equal("TunnelerLife", (string?)pipeDef.Element("designationCategory"));
         Assert.Equal("Conduits", (string?)pipeDef.Element("drawStyleCategory"));
         Assert.Equal("false", (string?)pipeDef.Element("clearBuildingArea"));
@@ -68,6 +69,7 @@ public sealed class ThermalNetworkXmlTests
         XElement ventDef = LoadThingDef("TunnelerLife_ThermalVent");
 
         Assert.Equal("TunnelerLife.Building_ThermalVent", (string?)ventDef.Element("thingClass"));
+        Assert.Contains("thermal pipes on the other three sides", (string?)ventDef.Element("description") ?? string.Empty);
         Assert.Equal("TunnelerLife", (string?)ventDef.Element("designationCategory"));
         Assert.Equal("Rare", (string?)ventDef.Element("tickerType"));
         Assert.Equal("true", (string?)ventDef.Element("building")?.Element("canPlaceOverWall"));
@@ -145,6 +147,8 @@ public sealed class ThermalNetworkXmlTests
             element => ((string?)element.Attribute("Class")) == "CompProperties_Flickable");
 
         Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "Things", "Building", "TunnelerLife", "ThermostaticValve.png")));
+        Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "Things", "Building", "TunnelerLife", "ThermostaticValve_On.png")));
+        Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "Things", "Building", "TunnelerLife", "ThermostaticValve_Off.png")));
         Assert.True(File.Exists(Path.Combine(FindModRoot(), "Textures", "UI", "Commands", "ThermostaticValve.png")));
     }
 
@@ -207,6 +211,30 @@ public sealed class ThermalNetworkXmlTests
             ?? string.Empty;
         Assert.Contains("temperature transfer", description);
         Assert.DoesNotContain("power", description.ToLowerInvariant());
+    }
+
+    [Fact]
+    public void ThermalNetworkDiagnosticsLanguage_ContainsPipeAndVentInspectLabels()
+    {
+        XElement languageData = LoadLanguageData();
+
+        Assert.Equal(
+            "Network temperature: {0}",
+            (string?)languageData.Element("TunnelerLife_ThermalPipeNetworkTemperatureInspect"));
+        Assert.Equal(
+            "Connected rooms: {0}",
+            (string?)languageData.Element("TunnelerLife_ThermalPipeConnectedRoomsInspect"));
+        Assert.Equal(
+            "Flow: {0}",
+            (string?)languageData.Element("TunnelerLife_ThermalVentFlowModeInspect"));
+        Assert.Equal(
+            "Air side: {0} ({1})",
+            (string?)languageData.Element("TunnelerLife_ThermalVentAirSideInspect"));
+        Assert.Equal(
+            "Pipe sides: {0} ({1} connected)",
+            (string?)languageData.Element("TunnelerLife_ThermalVentPipeSidesInspect"));
+        Assert.Equal("north", (string?)languageData.Element("TunnelerLife_DirectionNorth"));
+        Assert.Equal("south", (string?)languageData.Element("TunnelerLife_DirectionSouth"));
     }
 
     [Fact]

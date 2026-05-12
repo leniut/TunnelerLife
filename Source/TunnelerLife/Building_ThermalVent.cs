@@ -1,5 +1,7 @@
 using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using RimWorld;
 using Verse;
 
@@ -10,10 +12,6 @@ namespace TunnelerLife;
 /// </summary>
 public sealed class Building_ThermalVent : Building
 {
-    private CompFlickable? flickableComp;
-
-    public override Graphic Graphic => flickableComp?.CurrentGraphic ?? base.Graphic;
-
     private static readonly IntVec3[] CardinalDirections =
     [
         IntVec3.North,
@@ -22,9 +20,32 @@ public sealed class Building_ThermalVent : Building
         IntVec3.West
     ];
 
-    public IntVec3 OutletCell => Position + IntVec3.South.RotatedBy(Rotation);
+    private CompFlickable? flickableComp;
+    private ThermalVentFlowMode flowMode;
+
+    public override Graphic Graphic => flickableComp?.CurrentGraphic ?? base.Graphic;
+
+    private IntVec3 OutletDirection => IntVec3.South.RotatedBy(Rotation);
+
+    public IntVec3 OutletCell => Position + OutletDirection;
 
     public bool IsOpen => FlickUtility.WantsToBeOn(this);
+
+    public ThermalVentFlowMode FlowMode => flowMode;
+
+    public IEnumerable<IntVec3> PipeCells
+    {
+        get
+        {
+            foreach (IntVec3 direction in CardinalDirections)
+            {
+                if (direction != OutletDirection)
+                {
+                    yield return Position + direction;
+                }
+            }
+        }
+    }
 
     public IEnumerable<IntVec3> AdjacentPipeCells
     {
@@ -35,9 +56,8 @@ public sealed class Building_ThermalVent : Building
                 yield break;
             }
 
-            foreach (IntVec3 direction in CardinalDirections)
+            foreach (IntVec3 cell in PipeCells)
             {
-                IntVec3 cell = Position + direction;
                 if (ThermalPipeUtility.HasOpenThermalNetworkCellAt(cell, Map))
                 {
                     yield return cell;
@@ -50,13 +70,19 @@ public sealed class Building_ThermalVent : Building
     {
         get
         {
-            if (!Spawned || !OutletCell.InBounds(Map) || OutletCell.Impassable(Map))
+            if (!Spawned || !OutletCell.InBounds(Map))
             {
                 return null;
             }
 
-            return OutletCell.GetRoom(Map);
+        return OutletCell.GetRoom(Map);
         }
+    }
+
+    public override void ExposeData()
+    {
+        base.ExposeData();
+        Scribe_Values.Look(ref flowMode, "thermalVentFlowMode", ThermalVentFlowMode.PullFromAirSide);
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
@@ -73,6 +99,21 @@ public sealed class Building_ThermalVent : Building
         }
     }
 
+    public override IEnumerable<Gizmo> GetGizmos()
+    {
+        foreach (Gizmo gizmo in base.GetGizmos())
+        {
+            yield return gizmo;
+        }
+
+        yield return new Command_Action
+        {
+            defaultLabel = FlowModeLabel,
+            defaultDesc = "TunnelerLife_CommandToggleThermalVentFlowDesc".Translate(),
+            action = ToggleFlowMode
+        };
+    }
+
     public override string GetInspectString()
     {
         StringBuilder builder = new();
@@ -84,20 +125,78 @@ public sealed class Building_ThermalVent : Building
             builder.Append("VentClosed".Translate());
         }
 
+        AppendLineIfNeeded(builder);
+        builder.Append("TunnelerLife_ThermalVentFlowModeInspect".Translate(FlowModeLabel));
+        AppendLineIfNeeded(builder);
+        builder.Append("TunnelerLife_ThermalVentAirSideInspect".Translate(
+            DirectionLabel(OutletDirection),
+            RoomConnectionLabel()));
+        AppendLineIfNeeded(builder);
+        builder.Append("TunnelerLife_ThermalVentPipeSidesInspect".Translate(
+            PipeSideLabels(),
+            AdjacentPipeCells.Count().ToString(CultureInfo.InvariantCulture)));
+
         return builder.ToString();
     }
 
     public bool ConnectsToPipeCell(IntVec3 pipeCell)
     {
-        foreach (IntVec3 direction in CardinalDirections)
+        return PipeCells.Contains(pipeCell);
+    }
+
+    private void ToggleFlowMode()
+    {
+        flowMode = flowMode == ThermalVentFlowMode.PullFromAirSide
+            ? ThermalVentFlowMode.PushToAirSide
+            : ThermalVentFlowMode.PullFromAirSide;
+    }
+
+    private string FlowModeLabel
+    {
+        get
         {
-            if (Position + direction == pipeCell)
-            {
-                return true;
-            }
+            return flowMode == ThermalVentFlowMode.PullFromAirSide
+                ? "TunnelerLife_ThermalVentFlowPull".Translate()
+                : "TunnelerLife_ThermalVentFlowPush".Translate();
+        }
+    }
+
+    private string RoomConnectionLabel()
+    {
+        Room? room = ConnectedRoom;
+        return room != null
+            ? "TunnelerLife_ThermalVentRoomConnected".Translate(FormatTemperature(room.Temperature))
+            : "TunnelerLife_ThermalVentRoomMissing".Translate();
+    }
+
+    private static string DirectionLabel(IntVec3 direction)
+    {
+        if (direction == IntVec3.North)
+        {
+            return "TunnelerLife_DirectionNorth".Translate();
         }
 
-        return false;
+        if (direction == IntVec3.East)
+        {
+            return "TunnelerLife_DirectionEast".Translate();
+        }
+
+        if (direction == IntVec3.South)
+        {
+            return "TunnelerLife_DirectionSouth".Translate();
+        }
+
+        return "TunnelerLife_DirectionWest".Translate();
+    }
+
+    private static string FormatTemperature(float temperature)
+    {
+        return temperature.ToString("0.#", CultureInfo.InvariantCulture) + " C";
+    }
+
+    private string PipeSideLabels()
+    {
+        return string.Join(", ", PipeCells.Select(cell => DirectionLabel(cell - Position)));
     }
 
     private static void AppendLineIfNeeded(StringBuilder builder)
