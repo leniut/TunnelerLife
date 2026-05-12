@@ -238,6 +238,49 @@ public sealed class ThermalNetworkXmlTests
     }
 
     [Fact]
+    public void SettingsLanguage_ContainsFeatureToggleLabels()
+    {
+        XElement languageData = LoadLanguageData();
+
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsIntro"));
+        Assert.Equal(
+            "Builders",
+            (string?)languageData.Element("TunnelerLife_SettingsTabBuilders"));
+        Assert.Equal(
+            "Commands",
+            (string?)languageData.Element("TunnelerLife_SettingsTabCommands"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsBuildersIntro"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsCommandsIntro"));
+        Assert.Equal(
+            "World rebuilding",
+            (string?)languageData.Element("TunnelerLife_SettingsSectionWorldRebuilding"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsSectionWorldRebuildingDesc"));
+        Assert.Equal(
+            "Enable wall rebuilding",
+            (string?)languageData.Element("TunnelerLife_SettingsEnableWallRebuilding"));
+        Assert.Equal(
+            "Heat pipe system",
+            (string?)languageData.Element("TunnelerLife_SettingsSectionThermalSystem"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsSectionThermalSystemDesc"));
+        Assert.Equal(
+            "Heat pipe system",
+            (string?)languageData.Element("TunnelerLife_SettingsEnableThermalSystem"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsThermostatTolerance"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsThermalTransferStrength"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsSectionPipeVariants"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsEnableHiddenThermalPipes"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsEnableWaterproofThermalPipes"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsSectionInterfaceDiagnostics"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsShowThermalOverlay"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsShowVentDirectionMarkers"));
+        Assert.NotNull(languageData.Element("TunnelerLife_SettingsEnableThermalDebugInfo"));
+        Assert.NotNull(languageData.Element("TunnelerLife_WallRebuildingDisabled"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalSystemDisabled"));
+        Assert.NotNull(languageData.Element("TunnelerLife_HiddenThermalPipesDisabled"));
+        Assert.NotNull(languageData.Element("TunnelerLife_WaterproofThermalPipesDisabled"));
+    }
+
+    [Fact]
     public void TunnelerLife_PatchesVanillaPowerSwitchToDrawAboveCables()
     {
         string modRoot = FindModRoot();

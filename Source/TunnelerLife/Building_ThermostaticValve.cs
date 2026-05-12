@@ -103,6 +103,12 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
             return;
         }
 
+        if (!TunnelerLifeFeatureAvailability.ThermalSystemEnabled)
+        {
+            ApplyDecision(new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource));
+            return;
+        }
+
         if (!HasPower)
         {
             ApplyDecision(new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoPower));
@@ -123,7 +129,8 @@ public sealed class Building_ThermostaticValve : Building_ThermalValve
                 TargetTemperature,
                 sideTemperatures.ControlledTemperature.Value,
                 sideTemperatures.SourceTemperature,
-                hasPower: true));
+                hasPower: true,
+                temperatureTolerance: TunnelerLifeFeatureAvailability.ThermostatTolerance));
         ApplyDecision(decision, sideTemperatures.SourceCell);
     }
 

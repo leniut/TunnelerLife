@@ -36,8 +36,19 @@ public sealed class Designator_Rockfill : Designator
         }
     }
 
+    public override bool Visible => TunnelerLifeFeatureAvailability.WallRebuildingEnabled;
+
     public override void ProcessInput(Event ev)
     {
+        if (!TunnelerLifeFeatureAvailability.WallRebuildingEnabled)
+        {
+            Messages.Message(
+                TunnelerLifeFeatureAvailability.WallRebuildingDisabledReport.Reason,
+                MessageTypeDefOf.RejectInput,
+                historical: false);
+            return;
+        }
+
         List<FloatMenuOption> options = buildDesignators
             .Select(designator => (Designator: designator, Count: CountAvailableChunks(designator.ChunkDef)))
             .Where(option => option.Count > 0)
@@ -96,7 +107,7 @@ public sealed class Designator_Rockfill : Designator
             useMouseIcon = true;
         }
 
-        public override bool Visible => true;
+        public override bool Visible => TunnelerLifeFeatureAvailability.WallRebuildingEnabled;
 
         public override string Label => $"{chunkDef.LabelCap} rockfill";
 

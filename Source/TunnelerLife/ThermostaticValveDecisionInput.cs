@@ -9,12 +9,14 @@ public readonly struct ThermostaticValveDecisionInput
         float targetTemperature,
         float controlledTemperature,
         float? sourceTemperature,
-        bool hasPower)
+        bool hasPower,
+        float temperatureTolerance = TunnelerLifeSettings.DefaultThermostatTolerance)
     {
         TargetTemperature = targetTemperature;
         ControlledTemperature = controlledTemperature;
         SourceTemperature = sourceTemperature;
         HasPower = hasPower;
+        TemperatureTolerance = temperatureTolerance;
     }
 
     public float TargetTemperature { get; }
@@ -24,4 +26,6 @@ public readonly struct ThermostaticValveDecisionInput
     public float? SourceTemperature { get; }
 
     public bool HasPower { get; }
+
+    public float TemperatureTolerance { get; }
 }

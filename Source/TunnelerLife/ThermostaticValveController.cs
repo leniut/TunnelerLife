@@ -5,8 +5,6 @@ namespace TunnelerLife;
 /// </summary>
 public static class ThermostaticValveController
 {
-    private const float TemperatureTolerance = 2f;
-
     public static ThermostaticValveDecision Decide(ThermostaticValveDecisionInput input)
     {
         if (!input.HasPower)
@@ -21,16 +19,16 @@ public static class ThermostaticValveController
 
         float sourceTemperature = input.SourceTemperature.Value;
 
-        if (IsBelowTarget(input.ControlledTemperature, input.TargetTemperature))
+        if (IsBelowTarget(input.ControlledTemperature, input.TargetTemperature, input.TemperatureTolerance))
         {
-            return IsAboveTarget(sourceTemperature, input.TargetTemperature)
+            return IsAboveTarget(sourceTemperature, input.TargetTemperature, input.TemperatureTolerance)
                 ? new ThermostaticValveDecision(true, ThermostaticValveStatus.Open)
                 : new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
         }
 
-        if (IsAboveTarget(input.ControlledTemperature, input.TargetTemperature))
+        if (IsAboveTarget(input.ControlledTemperature, input.TargetTemperature, input.TemperatureTolerance))
         {
-            return IsBelowTarget(sourceTemperature, input.TargetTemperature)
+            return IsBelowTarget(sourceTemperature, input.TargetTemperature, input.TemperatureTolerance)
                 ? new ThermostaticValveDecision(true, ThermostaticValveStatus.Open)
                 : new ThermostaticValveDecision(false, ThermostaticValveStatus.BlockedNoUsefulSource);
         }
@@ -38,13 +36,13 @@ public static class ThermostaticValveController
         return new ThermostaticValveDecision(false, ThermostaticValveStatus.Closed);
     }
 
-    private static bool IsBelowTarget(float temperature, float targetTemperature)
+    private static bool IsBelowTarget(float temperature, float targetTemperature, float temperatureTolerance)
     {
-        return temperature < targetTemperature - TemperatureTolerance;
+        return temperature < targetTemperature - temperatureTolerance;
     }
 
-    private static bool IsAboveTarget(float temperature, float targetTemperature)
+    private static bool IsAboveTarget(float temperature, float targetTemperature, float temperatureTolerance)
     {
-        return temperature > targetTemperature + TemperatureTolerance;
+        return temperature > targetTemperature + temperatureTolerance;
     }
 }

@@ -16,6 +16,11 @@ public sealed class PlaceWorker_ThermalPipe : PlaceWorker
         Thing? thingToIgnore = null,
         Thing? thing = null)
     {
+        if (!TunnelerLifeFeatureAvailability.IsBuildableEnabled(checkingDef, TunnelerLifeMod.Settings))
+        {
+            return TunnelerLifeFeatureAvailability.DisabledReportForBuildable(checkingDef);
+        }
+
         foreach (Thing existingThing in loc.GetThingList(map))
         {
             if (existingThing == thingToIgnore)

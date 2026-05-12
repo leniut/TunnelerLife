@@ -14,6 +14,11 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
 
     public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing? thing = null)
     {
+        if (!TunnelerLifeFeatureAvailability.ShowVentDirectionMarkers)
+        {
+            return;
+        }
+
         GenDraw.DrawFieldEdges(GetPipeCells(center, rot), PipeSideColor);
         GenDraw.DrawFieldEdges([GetOutletCell(center, rot)], OutletColor);
     }
@@ -26,6 +31,11 @@ public sealed class PlaceWorker_ThermalVent : PlaceWorker
         Thing? thingToIgnore = null,
         Thing? thing = null)
     {
+        if (!TunnelerLifeFeatureAvailability.IsBuildableEnabled(checkingDef, TunnelerLifeMod.Settings))
+        {
+            return TunnelerLifeFeatureAvailability.DisabledReportForBuildable(checkingDef);
+        }
+
         return true;
     }
 

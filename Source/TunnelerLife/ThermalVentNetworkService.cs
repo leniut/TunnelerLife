@@ -9,7 +9,7 @@ namespace TunnelerLife;
 /// </summary>
 public static class ThermalVentNetworkService
 {
-    private const float EqualizationRate = 14f;
+    private const float BaseEqualizationRate = 14f;
 
     private static readonly IntVec3[] CardinalDirections =
     [
@@ -21,6 +21,11 @@ public static class ThermalVentNetworkService
 
     public static bool TryEqualizeNetwork(Building_ThermalVent origin)
     {
+        if (!TunnelerLifeFeatureAvailability.ThermalSystemEnabled)
+        {
+            return false;
+        }
+
         if (!origin.Spawned || !origin.IsOpen)
         {
             return false;
@@ -42,7 +47,11 @@ public static class ThermalVentNetworkService
             return false;
         }
 
-        EqualizeRooms(sourceRoomPortGroups, outputRoomPortGroups, origin.Map.Biome.inVacuum);
+        EqualizeRooms(
+            sourceRoomPortGroups,
+            outputRoomPortGroups,
+            origin.Map.Biome.inVacuum,
+            BaseEqualizationRate * TunnelerLifeFeatureAvailability.ThermalTransferStrength);
         return true;
     }
 
@@ -106,7 +115,8 @@ public static class ThermalVentNetworkService
     private static void EqualizeRooms(
         IReadOnlyList<RoomPortGroup> sourceRoomPortGroups,
         IReadOnlyList<RoomPortGroup> outputRoomPortGroups,
-        bool inVacuum)
+        bool inVacuum,
+        float equalizationRate)
     {
         RoomPortGroup[] roomPortGroups = sourceRoomPortGroups
             .Concat(outputRoomPortGroups)
@@ -118,7 +128,7 @@ public static class ThermalVentNetworkService
                 group.Room.UsesOutdoorTemperature,
                 group.ExchangePortCount))
             .ToArray();
-        float[] deltas = ThermalExchangeCalculator.CalculateTemperatureDeltas(states, EqualizationRate, inVacuum);
+        float[] deltas = ThermalExchangeCalculator.CalculateTemperatureDeltas(states, equalizationRate, inVacuum);
 
         for (int i = sourceRoomPortGroups.Count; i < roomPortGroups.Length; i++)
         {

@@ -151,4 +151,19 @@ public sealed class ThermostaticValveControllerTests
         Assert.False(decision.IsOpen);
         Assert.Equal(ThermostaticValveStatus.BlockedNoUsefulSource, decision.Status);
     }
+
+    [Fact]
+    public void Decide_UsesInputTemperatureTolerance()
+    {
+        ThermostaticValveDecision decision = ThermostaticValveController.Decide(
+            new ThermostaticValveDecisionInput(
+                targetTemperature: 21f,
+                controlledTemperature: 19.5f,
+                sourceTemperature: 30f,
+                hasPower: true,
+                temperatureTolerance: 1f));
+
+        Assert.True(decision.IsOpen);
+        Assert.Equal(ThermostaticValveStatus.Open, decision.Status);
+    }
 }

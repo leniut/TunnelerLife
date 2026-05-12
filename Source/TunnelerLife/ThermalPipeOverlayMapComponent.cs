@@ -26,7 +26,10 @@ public sealed class ThermalPipeOverlayMapComponent : MapComponent
     public ThermalPipeOverlayMapComponent(Map map)
         : base(map)
     {
-        Log.Message($"[TunnelerLife] Thermal pipe overlay map component attached to map '{map?.uniqueID}' ({map?.Size.x}x{map?.Size.z}).");
+        if (TunnelerLifeFeatureAvailability.ThermalDebugInfoEnabled)
+        {
+            Log.Message($"[TunnelerLife] Thermal pipe overlay map component attached to map '{map?.uniqueID}' ({map?.Size.x}x{map?.Size.z}).");
+        }
     }
 
     public override void MapComponentDraw()
@@ -100,6 +103,11 @@ public sealed class ThermalPipeOverlayMapComponent : MapComponent
 
     private static ThermalPipeOverlayDrawState GetDrawState()
     {
+        if (!TunnelerLifeFeatureAvailability.ShowThermalOverlay)
+        {
+            return new ThermalPipeOverlayDrawState(false, null, null, null, null);
+        }
+
         MainTabWindow_Architect architectWindow = Find.WindowStack.WindowOfType<MainTabWindow_Architect>();
         string? selectedCategoryDefName = architectWindow?.selectedDesPanel?.def?.defName;
         Designator? selectedDesignator = Find.DesignatorManager.SelectedDesignator;
@@ -180,6 +188,11 @@ public sealed class ThermalPipeOverlayMapComponent : MapComponent
         int overlayCellCount,
         int isolatedCount)
     {
+        if (!TunnelerLifeFeatureAvailability.ThermalDebugInfoEnabled)
+        {
+            return;
+        }
+
         int ticksGame = GenTicks.TicksGame;
         string key = $"{drawState.ShouldDraw}|{drawState.SelectedCategoryDefName}|{drawState.SelectedDesignatorType}|{drawState.PlacingDefName}|{drawState.PlacingThingClassName}|{builtPipeCount}|{plannedPipeCount}|{pipeCellCount}|{overlayCellCount}|{isolatedCount}";
         if (key == lastDiagnosticsKey && ticksGame - lastDiagnosticsTick < DiagnosticsIntervalTicks)

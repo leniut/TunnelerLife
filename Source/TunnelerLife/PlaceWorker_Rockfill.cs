@@ -25,6 +25,11 @@ public sealed class PlaceWorker_Rockfill : PlaceWorker
         Thing thingToIgnore = null!,
         Thing thing = null!)
     {
+        if (!TunnelerLifeFeatureAvailability.WallRebuildingEnabled)
+        {
+            return TunnelerLifeFeatureAvailability.WallRebuildingDisabledReport;
+        }
+
         if (!loc.InBounds(map))
         {
             return false;

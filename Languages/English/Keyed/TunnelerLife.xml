@@ -4,7 +4,43 @@
   <TunnelerLife_RockfillCannotPlaceOnWater>Rockfill cannot be placed on deep water.</TunnelerLife_RockfillCannotPlaceOnWater>
   <TunnelerLife_RockfillUnsupportedMaterial>Rockfill supports granite, limestone, marble, sandstone, and slate chunks.</TunnelerLife_RockfillUnsupportedMaterial>
   <TunnelerLife_RockfillNoChunksAvailable>No supported stone chunks are available.</TunnelerLife_RockfillNoChunksAvailable>
+  <TunnelerLife_WallRebuildingDisabled>Wall rebuilding is disabled in Tunneler Life settings.</TunnelerLife_WallRebuildingDisabled>
   <TunnelerLife_ThermalPipeAlreadyHere>A thermal pipe is already planned or built here.</TunnelerLife_ThermalPipeAlreadyHere>
+  <TunnelerLife_ThermalSystemDisabled>Heating system is disabled in Tunneler Life settings.</TunnelerLife_ThermalSystemDisabled>
+  <TunnelerLife_HiddenThermalPipesDisabled>Hidden thermal pipes are disabled in Tunneler Life settings.</TunnelerLife_HiddenThermalPipesDisabled>
+  <TunnelerLife_WaterproofThermalPipesDisabled>Waterproof thermal pipes are disabled in Tunneler Life settings.</TunnelerLife_WaterproofThermalPipesDisabled>
+  <TunnelerLife_BuildableDisabled>This Tunneler Life build option is disabled in mod settings.</TunnelerLife_BuildableDisabled>
+  <TunnelerLife_SettingsIntro>Configure which Tunneler Life systems are active. Disabled systems are hidden from the build menu where possible, and their gameplay logic stops running on existing buildings.</TunnelerLife_SettingsIntro>
+  <TunnelerLife_SettingsTabBuilders>Builders</TunnelerLife_SettingsTabBuilders>
+  <TunnelerLife_SettingsTabCommands>Commands</TunnelerLife_SettingsTabCommands>
+  <TunnelerLife_SettingsBuildersIntro>Build-menu systems and buildable variants.</TunnelerLife_SettingsBuildersIntro>
+  <TunnelerLife_SettingsCommandsIntro>Runtime controls, visual aids, and troubleshooting options.</TunnelerLife_SettingsCommandsIntro>
+  <TunnelerLife_SettingsSectionWorldRebuilding>World rebuilding</TunnelerLife_SettingsSectionWorldRebuilding>
+  <TunnelerLife_SettingsSectionWorldRebuildingDesc>Options for rebuilding mined tunnel cells into natural stone walls with supported rock chunks.</TunnelerLife_SettingsSectionWorldRebuildingDesc>
+  <TunnelerLife_SettingsEnableWallRebuilding>Enable wall rebuilding</TunnelerLife_SettingsEnableWallRebuilding>
+  <TunnelerLife_SettingsEnableWallRebuildingDesc>Show and allow rockfill wall rebuilding tools.</TunnelerLife_SettingsEnableWallRebuildingDesc>
+  <TunnelerLife_SettingsSectionThermalSystem>Heat pipe system</TunnelerLife_SettingsSectionThermalSystem>
+  <TunnelerLife_SettingsSectionThermalSystemDesc>Options for thermal pipes, vents, manual valves, thermostatic valves, and room temperature transfer.</TunnelerLife_SettingsSectionThermalSystemDesc>
+  <TunnelerLife_SettingsEnableThermalSystem>Heat pipe system</TunnelerLife_SettingsEnableThermalSystem>
+  <TunnelerLife_SettingsEnableThermalSystemDesc>Show and allow thermal pipes, vents, valves, and temperature transfer.</TunnelerLife_SettingsEnableThermalSystemDesc>
+  <TunnelerLife_SettingsThermostatTolerance>Thermostat tolerance: {0}</TunnelerLife_SettingsThermostatTolerance>
+  <TunnelerLife_SettingsThermostatToleranceDesc>Thermostatic valves ignore temperature differences smaller than this value.</TunnelerLife_SettingsThermostatToleranceDesc>
+  <TunnelerLife_SettingsThermalTransferStrength>Thermal transfer strength: {0}</TunnelerLife_SettingsThermalTransferStrength>
+  <TunnelerLife_SettingsThermalTransferStrengthDesc>Multiplier for how quickly connected vents move room temperatures toward the pipe network average.</TunnelerLife_SettingsThermalTransferStrengthDesc>
+  <TunnelerLife_SettingsSectionPipeVariants>Thermal pipe variants</TunnelerLife_SettingsSectionPipeVariants>
+  <TunnelerLife_SettingsSectionPipeVariantsDesc>Optional pipe build variants. Disabling one hides it from the build menu while leaving the basic thermal pipe available.</TunnelerLife_SettingsSectionPipeVariantsDesc>
+  <TunnelerLife_SettingsEnableHiddenThermalPipes>Enable hidden thermal pipes</TunnelerLife_SettingsEnableHiddenThermalPipes>
+  <TunnelerLife_SettingsEnableHiddenThermalPipesDesc>Show and allow invisible protected thermal pipes.</TunnelerLife_SettingsEnableHiddenThermalPipesDesc>
+  <TunnelerLife_SettingsEnableWaterproofThermalPipes>Enable waterproof thermal pipes</TunnelerLife_SettingsEnableWaterproofThermalPipes>
+  <TunnelerLife_SettingsEnableWaterproofThermalPipesDesc>Show and allow thermal pipes that can be built through shallow water and mud.</TunnelerLife_SettingsEnableWaterproofThermalPipesDesc>
+  <TunnelerLife_SettingsSectionInterfaceDiagnostics>Interface and diagnostics</TunnelerLife_SettingsSectionInterfaceDiagnostics>
+  <TunnelerLife_SettingsSectionInterfaceDiagnosticsDesc>Visual aids and troubleshooting output for understanding thermal networks.</TunnelerLife_SettingsSectionInterfaceDiagnosticsDesc>
+  <TunnelerLife_SettingsShowThermalOverlay>Show thermal pipe overlay</TunnelerLife_SettingsShowThermalOverlay>
+  <TunnelerLife_SettingsShowThermalOverlayDesc>Draw the colored pipe network overlay while the thermal category or a thermal build tool is selected.</TunnelerLife_SettingsShowThermalOverlayDesc>
+  <TunnelerLife_SettingsShowVentDirectionMarkers>Show vent direction markers</TunnelerLife_SettingsShowVentDirectionMarkers>
+  <TunnelerLife_SettingsShowVentDirectionMarkersDesc>Draw colored placement markers for the vent air side and pipe connection sides.</TunnelerLife_SettingsShowVentDirectionMarkersDesc>
+  <TunnelerLife_SettingsEnableThermalDebugInfo>Enable thermal debug info</TunnelerLife_SettingsEnableThermalDebugInfo>
+  <TunnelerLife_SettingsEnableThermalDebugInfoDesc>Write extra thermal overlay diagnostics to the RimWorld log for troubleshooting.</TunnelerLife_SettingsEnableThermalDebugInfoDesc>
   <TunnelerLife_ThermalVentNeedsRoomSide>Thermal vent requires an open room on its room side.</TunnelerLife_ThermalVentNeedsRoomSide>
   <TunnelerLife_ThermalVentNeedsPipeSide>Thermal vent requires a thermal pipe on its pipe side.</TunnelerLife_ThermalVentNeedsPipeSide>
   <TunnelerLife_ThermalPipeNetworkTemperatureInspect>Network temperature: {0}</TunnelerLife_ThermalPipeNetworkTemperatureInspect>
