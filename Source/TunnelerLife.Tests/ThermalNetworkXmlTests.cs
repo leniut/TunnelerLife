@@ -235,6 +235,21 @@ public sealed class ThermalNetworkXmlTests
             (string?)languageData.Element("TunnelerLife_ThermalVentPipeSidesInspect"));
         Assert.Equal("north", (string?)languageData.Element("TunnelerLife_DirectionNorth"));
         Assert.Equal("south", (string?)languageData.Element("TunnelerLife_DirectionSouth"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorHeader"));
+        Assert.NotNull(languageData.Element("TunnelerLife_CommandOpenThermalInspectorLabel"));
+        Assert.NotNull(languageData.Element("TunnelerLife_CommandOpenThermalInspectorDesc"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryReady"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryMissingInput"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryMissingOutput"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryNoConnectedNetwork"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryVents"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryRooms"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSummaryBlockers"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorSourceTemperature"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorVents"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorConnectedRooms"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorFlowBlockers"));
+        Assert.NotNull(languageData.Element("TunnelerLife_ThermalInspectorNoConnectedNetwork"));
     }
 
     [Fact]

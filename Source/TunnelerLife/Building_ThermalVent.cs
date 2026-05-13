@@ -112,6 +112,10 @@ public sealed class Building_ThermalVent : Building
             defaultDesc = "TunnelerLife_CommandToggleThermalVentFlowDesc".Translate(),
             action = ToggleFlowMode
         };
+
+        yield return ThermalNetworkInspectorCommand.Create(
+            LabelCap,
+            () => ThermalNetworkDiagnostics.InspectVent(this));
     }
 
     public override string GetInspectString()
@@ -135,6 +139,7 @@ public sealed class Building_ThermalVent : Building
         builder.Append("TunnelerLife_ThermalVentPipeSidesInspect".Translate(
             PipeSideLabels(),
             AdjacentPipeCells.Count().ToString(CultureInfo.InvariantCulture)));
+        ThermalNetworkInspectorFormatter.AppendSummaryTo(builder, ThermalNetworkDiagnostics.InspectVent(this));
 
         return builder.ToString();
     }

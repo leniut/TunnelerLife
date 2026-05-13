@@ -1,5 +1,4 @@
 using RimWorld;
-using System.Globalization;
 using System.Text;
 using Verse;
 
@@ -15,15 +14,21 @@ public sealed class Building_ThermalPipe : Building
         StringBuilder builder = new();
         builder.Append(base.GetInspectString());
 
-        ThermalNetworkDiagnosticSnapshot diagnostics = ThermalNetworkDiagnostics.InspectPipe(this);
-        AppendLineIfNeeded(builder);
-        builder.Append("TunnelerLife_ThermalPipeNetworkTemperatureInspect".Translate(
-            FormatTemperature(diagnostics.NetworkTemperature)));
-        AppendLineIfNeeded(builder);
-        builder.Append("TunnelerLife_ThermalPipeConnectedRoomsInspect".Translate(
-            diagnostics.ConnectedRoomCount.ToString(CultureInfo.InvariantCulture)));
+        ThermalNetworkInspectorFormatter.AppendSummaryTo(builder, ThermalNetworkDiagnostics.InspectPipe(this));
 
         return builder.ToString();
+    }
+
+    public override System.Collections.Generic.IEnumerable<Gizmo> GetGizmos()
+    {
+        foreach (Gizmo gizmo in base.GetGizmos())
+        {
+            yield return gizmo;
+        }
+
+        yield return ThermalNetworkInspectorCommand.Create(
+            LabelCap,
+            () => ThermalNetworkDiagnostics.InspectPipe(this));
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
@@ -40,20 +45,6 @@ public sealed class Building_ThermalPipe : Building
         ThermalPipeMeshUtility.DirtyNetworkCellAndNeighbors(map, position);
     }
 
-    private static string FormatTemperature(float? temperature)
-    {
-        return temperature.HasValue
-            ? temperature.Value.ToString("0.#", CultureInfo.InvariantCulture) + " C"
-            : "TunnelerLife_ThermalPipeNetworkTemperatureUnavailable".Translate();
-    }
-
-    private static void AppendLineIfNeeded(StringBuilder builder)
-    {
-        if (builder.Length > 0)
-        {
-            builder.AppendLine();
-        }
-    }
 }
 
 internal static class ThermalPipeMeshUtility

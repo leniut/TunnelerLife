@@ -1,4 +1,5 @@
 using RimWorld;
+using System.Text;
 using Verse;
 
 namespace TunnelerLife;
@@ -13,6 +14,25 @@ public class Building_ThermalValve : Building
     public override Graphic Graphic => flickableComp?.CurrentGraphic ?? base.Graphic;
 
     public virtual bool IsOpen => FlickUtility.WantsToBeOn(this);
+
+    public override string GetInspectString()
+    {
+        StringBuilder builder = new(base.GetInspectString());
+        ThermalNetworkInspectorFormatter.AppendSummaryTo(builder, ThermalNetworkDiagnostics.InspectValve(this));
+        return builder.ToString();
+    }
+
+    public override System.Collections.Generic.IEnumerable<Gizmo> GetGizmos()
+    {
+        foreach (Gizmo gizmo in base.GetGizmos())
+        {
+            yield return gizmo;
+        }
+
+        yield return ThermalNetworkInspectorCommand.Create(
+            LabelCap,
+            () => ThermalNetworkDiagnostics.InspectValve(this));
+    }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
